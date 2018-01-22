@@ -1,0 +1,117 @@
+package TCPClientobject;
+
+
+
+/*
+ * Java provides a mechanism, called object serialization where an object can be represented as a sequence of bytes that includes the object's data as well as information about the object's type and the types of data stored in the object.
+
+After a serialized object has been written into a file, it can be read from the file and deserialized that is, the type information and bytes that represent the object and its data can be used to recreate the object in memory.
+
+Most impressive is that the entire process is JVM independent, meaning an object can be serialized on one platform and deserialized on an entirely different platform.
+
+Classes ObjectInputStream and ObjectOutputStream are high-level streams that contain the methods for serializing and deserializing an object.
+ * 
+ * pay attation that if the client sends you integer so in the server you will get integer 
+ * and if it sends you string so you will get string . 
+ * 
+ * 
+ */
+
+import java.io.*; 
+import java.net.*; 
+import java.util.Scanner;
+
+
+
+class TCPClient_with_serialized { 
+
+	public enum Mode {HouseCommittee,Tenant};
+	public enum Operation {Update,Connect};
+	
+	public static void main(String argv[]) throws Exception 
+	{ 
+
+
+
+		//establishServerConnection();
+		
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Choose mode:"+'\n'+"1.House Committee"+'\n'+"2.Tenant");
+		Mode mode=readUserMode(sc);
+		System.out.println("Choose operation:"+'\n'+"1.Connect"+'\n'+"2.Update Password");
+		Operation operation=readUserOperation(sc);		
+		
+		if (operation==Operation.Update){
+			updatePassword(mode);
+		}
+		else{
+			assert(operation==Operation.Connect);
+			connect(mode);
+		}
+		
+		      
+	}
+
+	private static void connect(Mode mode) {
+		
+		//Read password and user name
+		Scanner sc = new Scanner(System.in);
+		System.out.println("write your username:");
+		String userName=sc.nextLine();
+		System.out.println("write your password:");
+		String password=sc.nextLine();
+		
+		
+		switch(mode){
+		case HouseCommittee:
+			//Create houseCom object with password and user name
+			HouseCommittee hc=new HouseCommittee(userName, password);			
+			//Run thread on this object which establish a connection and ask verification against DB
+			new Thread(hc).start();
+			break;
+		case Tenant:
+			
+			break;
+		}
+		
+	}
+
+	private static void updatePassword(Mode mode) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+
+	private static void TenantMode() {
+		
+		
+	}
+
+	private static Mode readUserMode(Scanner sc) {		
+		while (true){
+			int option=sc.nextInt();
+			if (option==1) {
+				return Mode.HouseCommittee;							
+			}
+			else if (option==2){
+				return Mode.Tenant;
+			}
+			System.out.println("wrong input! press 1 or 2");			
+		}		
+	}
+	
+	private static Operation readUserOperation(Scanner sc) {		
+		while (true){
+			int option=sc.nextInt();
+			if (option==1) {
+				return Operation.Connect;							
+			}
+			else if (option==2){
+				return Operation.Update;
+			}
+			System.out.println("wrong input! press 1 or 2");			
+		}		
+	}
+} 
+
