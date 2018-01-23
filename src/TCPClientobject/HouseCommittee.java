@@ -5,22 +5,30 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import TCPClientobject.myProtocol.HeaderContent;
-import TCPClientobject.myProtocol.HeaderType;
+import Message.RequestMsg;
+
+import Message.Message;
+import Message.Message.Header;
+import Message.Message.Sender;
 
 public class HouseCommittee extends Person  implements Runnable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public int seniority;
 	private String userName;
 	private String password;
 	//Data bases for chache data:
-	Map<Integer, String> map=new Map<Integer, String>; 
+	Map<Integer, int[]> tenants=new HashMap<Integer, int[]>(); 
+	int sumOfpayments;
+	//TODO ....more
 
 	public HouseCommittee(String userName, String password){
 		this.setPassword(password);
@@ -50,19 +58,7 @@ public class HouseCommittee extends Person  implements Runnable{
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
-	private static void establishServerConnection() throws UnknownHostException, IOException {
-		Socket clientSocket = new Socket("localhost", 10000); 		
-
-		ObjectOutputStream  outToServer = new ObjectOutputStream (clientSocket.getOutputStream() );
-		BufferedReader inFromServer = 
-				new BufferedReader(new
-						InputStreamReader(clientSocket.getInputStream()));
-		outToServer.writeObject();		
-		System.out.println(inFromServer.readLine());
-	}
-
-
+	
 
 	public void run(){
 
@@ -86,7 +82,7 @@ public class HouseCommittee extends Person  implements Runnable{
 					case 1: //payments
 						System.out.println("input apartment number:");
 						int apartment=sc.nextInt();
-						
+						System.out.println("Tenant inserted apartment number: "+apartment);
 						//build message
 						
 						//send
@@ -105,14 +101,15 @@ public class HouseCommittee extends Person  implements Runnable{
 						break;
 					case 8:
 						break;
-					}
+					}					
 				}
 			}
 			else{
-				System.out.println("user "+this.getName() + "doesnt exist!");
+				System.out.println("user "+this.getName() + "doesn't exist!");
 				System.out.println("Exiting...");
 				clientSocket.close();
 			}
+			sc.close();
 		}
 		catch (IOException e) {
 			System.out.println("Cannot connect to port 1000");
@@ -130,6 +127,8 @@ public class HouseCommittee extends Person  implements Runnable{
 
 	}
 
+	
+
 	private void displayMenu() {
 		System.out.println("Choose one of the foloowing options:");
 		//1.
@@ -140,9 +139,9 @@ public class HouseCommittee extends Person  implements Runnable{
 
 	private boolean userExist(ObjectOutputStream outToServer, BufferedReader inFromServer) throws IOException {
 		ArrayList<String> args=new ArrayList<String>(Arrays.asList(this.userName,this.password));
-		Message msg=new Message("LOGIN","LOGIN",args,this);
+		Message msg=new RequestMsg(Header.LOGIN, Sender.COMMITTEE, args);
 		outToServer.writeObject(msg);		
-		return inFromServer.readLine().equals("OK"); //TODO consider if server needs to implement message
+		return inFromServer.readLine().equals("OK"); //TODO wait for respnse Object
 
 	}
 

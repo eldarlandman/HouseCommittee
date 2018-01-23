@@ -1,74 +1,84 @@
 package TCPServerobject;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import Message.Message;
+import Message.Message.Header;
+import Message.Message.Sender;
+import Message.RequestMsg;
+import MessagesHandler.AbstractHandler;
+import MessagesHandler.CommitteeHandler;
+import MessagesHandler.TenantHandler;
 
 
 
 public class socketHandler extends Thread  {
-	Socket incoming;
-	
-	
-	socketHandler(Socket _in  )
+
+
+	Socket incoming;	
+	AbstractHandler concreteHandler;
+	AtomicBoolean connected;
+
+
+	socketHandler(Socket in , AtomicBoolean alive )
 	{
-		this.incoming=_in;
-		
+		this.incoming= in;
+		connected=alive;
+
 	}
-	
+
 	public void run()
 	{
-	
+
 		// Main steps required:
-//		1. Get a connection to database
-//		2. Create a statement 
-//		3. Execute SQL query
-//		4. process the result set
-		Object clientObject; 
+		//		1. Get a connection to database
+		//		2. Create a statement 
+		//		3. Execute SQL query
+		//		4. process the result set
+
 		ObjectInputStream inFromClient = null;
-		DataOutputStream outToClient = null ;
+		ObjectOutputStream outToClient = null ;
+		Message msg=null;
 		try {
-			 inFromClient = new ObjectInputStream (incoming.getInputStream());
-			 outToClient = new DataOutputStream(incoming.getOutputStream()); 
-		
-		} catch (IOException e) {
+			inFromClient = new ObjectInputStream (incoming.getInputStream());
+			outToClient = new ObjectOutputStream (incoming.getOutputStream()); 
+			System.out.println("thread"+ Thread.currentThread().getName()+ "is establishing connection per user");
+			msg = (Message) inFromClient.readObject(); //Blocking until client send Message Object
+			if (msg instanceof RequestMsg){
+				Message.Sender sender=((RequestMsg)msg).getSender();
+				//TENANT,COMMITTEE
+				if (sender==Sender.TENANT){
+					concreteHandler=new TenantHandler(msg);
+				}
+				else{
+					concreteHandler=new CommitteeHandler(msg); //TODO same logic in TenantHandler
+				}
+			}
+			else{
+				System.out.println("Server got Message not instance of RequestMessage");
+			}
+		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	   double sum=0 ; 
-	   double count=0;
-	   double result=0;
-	
-	   try {
-		   Person s = null;
-		   Tenant l=null;
-		  
-          while (true){
-			
-        	  System.out.println("thread"+ Thread.currentThread().getName()+ "is establishing connection per user");
-        	  clientObject = inFromClient.readObject();
-		
-			if( clientObject instanceof Student){
-				 s = (Student) clientObject;
-			}
-				
 
-			
-			
-			 count= s.getPayment();
-			 outToClient.writeByte(count+"/n");
-          }
-         
-	   } catch (ClassNotFoundException | IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		/////////////////////////////////////////////Handling Client Message STARTS HERE/////////////////////////////////////////////
 		
+		while (this.connected.get())
+		{
+			
+			concreteHandler.processMsg(); 
+			
+			
+			//			Msg msg = receive request messsage
+			//					Response res = this.concreteHandler.processMessage(msg)
+			//					send res
+		}
 	}
-	}
+}
 

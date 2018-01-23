@@ -17,8 +17,7 @@ Classes ObjectInputStream and ObjectOutputStream are high-level streams that con
  * 
  */
 
-import java.io.*; 
-import java.net.*; 
+
 import java.util.Scanner;
 
 
@@ -27,66 +26,64 @@ class TCPClient_with_serialized {
 
 	public enum Mode {HouseCommittee,Tenant};
 	public enum Operation {Update,Connect};
-	
+
 	public static void main(String argv[]) throws Exception 
 	{ 
 
 
-
 		//establishServerConnection();
-		
+
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Choose mode:"+'\n'+"1.House Committee"+'\n'+"2.Tenant");
 		Mode mode=readUserMode(sc);
 		System.out.println("Choose operation:"+'\n'+"1.Connect"+'\n'+"2.Update Password");
 		Operation operation=readUserOperation(sc);		
-		
 		if (operation==Operation.Update){
-			updatePassword(mode);
+			register(mode,sc);
 		}
 		else{
 			assert(operation==Operation.Connect);
-			connect(mode);
+			connect(mode ,sc);
 		}
-		
-		      
+
+
+
+
+
 	}
 
-	private static void connect(Mode mode) {
-		
+	private static void connect(Mode mode, Scanner sc) throws InterruptedException {
+
 		//Read password and user name
-		Scanner sc = new Scanner(System.in);
+		sc.nextLine();
 		System.out.println("write your username:");
 		String userName=sc.nextLine();
 		System.out.println("write your password:");
 		String password=sc.nextLine();
-		
-		
+		sc.close();		
+
 		switch(mode){
 		case HouseCommittee:
 			//Create houseCom object with password and user name
 			HouseCommittee hc=new HouseCommittee(userName, password);			
 			//Run thread on this object which establish a connection and ask verification against DB
 			new Thread(hc).start();
+
 			break;
 		case Tenant:
-			
+
 			break;
 		}
-		
+
 	}
 
-	private static void updatePassword(Mode mode) {
+	private static void register(Mode mode,Scanner sc) {
 		// TODO Auto-generated method stub
-		
+		sc.close();
 	}
 
-	
 
-	private static void TenantMode() {
-		
-		
-	}
+
 
 	private static Mode readUserMode(Scanner sc) {		
 		while (true){
@@ -97,13 +94,14 @@ class TCPClient_with_serialized {
 			else if (option==2){
 				return Mode.Tenant;
 			}
+			sc.close();
 			System.out.println("wrong input! press 1 or 2");			
 		}		
 	}
-	
+
 	private static Operation readUserOperation(Scanner sc) {		
 		while (true){
-			int option=sc.nextInt();
+			int option=sc.nextInt();			
 			if (option==1) {
 				return Operation.Connect;							
 			}
