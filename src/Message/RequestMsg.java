@@ -13,8 +13,8 @@ public class RequestMsg extends Message {
 	private Sender sender;
 	
 	//Constructors
-	public RequestMsg(Header header,Sender sender, ArrayList<String> args){
-		super(args);
+	public RequestMsg(Header header,Sender sender, ArrayList<String> content){
+		super(content);
 		this.header=header;
 		this.sender=sender;
 	}

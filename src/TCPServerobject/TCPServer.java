@@ -30,7 +30,7 @@ class TCPServer implements Runnable{
 	{ 
 
 		Scanner sc=new Scanner(System.in);
-		System.out.println("insert listening number port:");
+		System.out.println("insert listening number port:");		
 		int port=sc.nextInt();
 		TCPServer server=new TCPServer(port); 
 

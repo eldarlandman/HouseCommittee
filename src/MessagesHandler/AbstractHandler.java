@@ -2,6 +2,7 @@ package MessagesHandler;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.Authenticator.RequestorType;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -10,17 +11,24 @@ import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import Message.Message;
+import Message.RequestMsg;
+import Message.ResponseMsg;
 
 public abstract class AbstractHandler{
 	
 	//Fields
 	public int requestsNumber; //count the number of requests from user	
-	private Message requestMsg, responseMsg;
+	private RequestMsg requestMsg;
+	private ResponseMsg responseMsg;
+	private boolean connected;
+	
 	//Constructors
-	public AbstractHandler(int reqNum,  Message req, Message res){
+	public AbstractHandler(int reqNum,  RequestMsg req, ResponseMsg res){
 		this.requestsNumber=reqNum;
 		this.setRequestMsg(req);
 		this.setResponseMsg(res);
+		connect(); //At this point, when abstractHandler instance is created, we already have socket with client
+		
 	}
 	
 	//Abstract Methods
@@ -29,6 +37,14 @@ public abstract class AbstractHandler{
 	
 	
 	//Concrete methods
+	protected void connect(){
+		this.connected=true;
+	}
+	
+	protected void disconnect(){
+		this.connected=false;
+	}
+	
 	private static ResultSet executeQueryAgainstDB(String query) throws SQLException {
 		// Main steps required:
 		//		1. Get a connection to database
@@ -43,42 +59,36 @@ public abstract class AbstractHandler{
 
 	public void sendMsg(ObjectOutputStream stream){
 		try {
-			stream.writeObject(getResponseMsg());
+			stream.writeObject(getResponseMsg()); //WRITE TO CLIENT the response message!
 		} catch (IOException e) {
-			System.out.println("Problem with sending "+getResponseMsg().toString()+" message to client");
+			System.out.println("Problem with sending '"+getResponseMsg().toString()+"' to client");
 			e.printStackTrace();
 		}
 	}
 
 
-	public Message getRequestMsg() {
+	public RequestMsg getRequestMsg() {
 		return requestMsg;
 	}
 
 
-	protected void setRequestMsg(Message requestMsg) {
+	public void setRequestMsg(RequestMsg requestMsg) {
 		this.requestMsg = requestMsg;
 	}
 
 
-	protected Message getResponseMsg() {
+	public ResponseMsg getResponseMsg() {
 		return responseMsg;
 	}
 
 
-	protected void setResponseMsg(Message responseMsg) {
+	public void setResponseMsg(ResponseMsg responseMsg) {
 		this.responseMsg = responseMsg;
 	}
 
-//	public Message getRequestMsg() {
-//		return RequestMsg;
-//	}
-//
-//	
-//
-//	public void setResponseMsg(Message buildRequestMsg) {
-//		this.ResponseMsg=buildRequestMsg
-//		
-//	}
+	public boolean isAlive() {
+		return this.connected;		
+	}
+
 	
 }

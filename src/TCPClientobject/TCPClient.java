@@ -24,9 +24,11 @@ import java.util.Scanner;
 
 class TCPClient_with_serialized { 
 
-	public enum Mode {HouseCommittee,Tenant};
-	public enum Operation {Update,Connect};
 
+	public enum Mode {HouseCommittee,Tenant};
+	public enum Operation {SignUp,Login};
+
+	 
 	public static void main(String argv[]) throws Exception 
 	{ 
 
@@ -36,13 +38,13 @@ class TCPClient_with_serialized {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Choose mode:"+'\n'+"1.House Committee"+'\n'+"2.Tenant");
 		Mode mode=readUserMode(sc);
-		System.out.println("Choose operation:"+'\n'+"1.Connect"+'\n'+"2.Update Password");
+		System.out.println("Choose operation:"+'\n'+"1.Login"+'\n'+"2.Sign-up");
 		Operation operation=readUserOperation(sc);		
-		if (operation==Operation.Update){
+		if (operation==Operation.SignUp){
 			register(mode,sc);
 		}
 		else{
-			assert(operation==Operation.Connect);
+			assert(operation==Operation.Login);
 			connect(mode ,sc);
 		}
 
@@ -61,7 +63,7 @@ class TCPClient_with_serialized {
 		System.out.println("write your password:");
 		String password=sc.nextLine();
 		sc.close();		
-
+	
 		switch(mode){
 		case HouseCommittee:
 			//Create houseCom object with password and user name
@@ -78,8 +80,8 @@ class TCPClient_with_serialized {
 	}
 
 	private static void register(Mode mode,Scanner sc) {
-		// TODO Auto-generated method stub
-		sc.close();
+		// TODO Implement register method
+		
 	}
 
 

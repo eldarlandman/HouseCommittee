@@ -10,13 +10,13 @@ public class ResponseMsg extends Message {
 	private static final long serialVersionUID = 1L;
 	//Fields
 	private boolean querySucceeded;
-	private String failureMsg;
+	private String msgInfo;
 
 	//Constructors
-	public ResponseMsg(boolean querySucc, String failure, ArrayList<String> args){
-		super(args);
+	public ResponseMsg(boolean querySucc, String msgInfo, ArrayList<String> content){
+		super(content);
 		this.querySucceeded=querySucc;
-		this.failureMsg=failure;
+		this.msgInfo=msgInfo;
 	}
 	
 	//Methods
@@ -24,12 +24,12 @@ public class ResponseMsg extends Message {
 		this.querySucceeded=succeed;
 	}
 	
-	public void setFailureMsg(String msg){
-		failureMsg=msg;
+	public void setMsgInfo(String msg){
+		msgInfo=msg;
 	}
 	
-	public String getFailureMsg(){
-		return failureMsg;
+	public String getMsgInfo(){
+		return msgInfo;
 	}
 	
 	public boolean isSucceed(){
@@ -39,5 +39,7 @@ public class ResponseMsg extends Message {
 	public void ToString() {
 		System.out.println("Message from your server");		
 	}
+	
+	
 	
 }

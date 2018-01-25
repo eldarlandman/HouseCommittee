@@ -3,16 +3,17 @@ package MessagesHandler;
 
 
 import Message.Message;
+import Message.RequestMsg;
 
 public class TenantHandler extends AbstractHandler {
 
-	public TenantHandler(Message req) {
+	public TenantHandler(RequestMsg req) {
 		super(0,req,null);
 	}
 	
 	//@Override
 	public void processMsg() {
-		// TODO call different SQL against DB depending on ReqMessage.header
+		// TODO Implement- same concept like Committee
 		System.out.println("Server got Message from Tenant!");
 		
 		
