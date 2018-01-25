@@ -1,5 +1,8 @@
 package MessagesHandler;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +26,7 @@ public class CommitteeHandler extends AbstractHandler {
 	}
 
 	@Override
-	public void processMsg() {
+	public void processMsg() throws SQLException {
 		Message currMsg=super.getRequestMsg();
 		Header currHeader=((RequestMsg)currMsg).getHeader();
 		switch (currHeader){
@@ -66,15 +69,29 @@ public class CommitteeHandler extends AbstractHandler {
 	}
 
 
-
-	private boolean checkUserCredential() {
-		return true ; //TODO implement. Only for debugging. CHeck against DB
-
-	}
-
+	//input: 
+	
 	private void setCommitteeCache() {
 		//this.TenantsTable= //TODO implement: Bring chache from DB
 
+	}
+
+	@Override
+	public boolean checkUserCredential() throws SQLException {
+		//extract username+passowrd from abstarctHandler.requestMsg
+		ArrayList<String> args=getRequestMsg().getArgs();
+		String userName=args.get(0);
+		String password=args.get(1);
+		//Create query(username,password)
+		String query=createQueryForLogIn(userName, password);
+		//answer=Execute query()
+		ResultSet answer=executeQueryAgainstDB("committeestable",query);
+		//return answer
+		return answer.first();
+	}
+
+	private String createQueryForLogIn(String userName, String password) {
+		return "SELECT committeesTable.ID from committeesTable WHERE userName="+userName+ "AND password="+password; 		
 	}
 
 

@@ -55,7 +55,7 @@ class TCPServer implements Runnable{
 
 			while (serverAlive.get()){
 
-				Socket soc=serverSocket.accept();				
+				Socket soc=serverSocket.accept(); //Server is waiting for client to connect				
 				socketHandler newConnection = new socketHandler(soc, serverAlive);
 
 				new Thread(newConnection).start();

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import Message.Message;
@@ -72,11 +73,14 @@ public class socketHandler extends Thread  {
 		
 		while (this.concreteHandler.isAlive())
 		{								
-				concreteHandler.processMsg();			
-				concreteHandler.sendMsg(outToClient);
+				//1
 				try {
+					concreteHandler.processMsg(); 		
+					//2
+					concreteHandler.sendMsg(outToClient);
+					//3
 					readMsg(inFromClient);
-				} catch (ClassNotFoundException | IOException e) {
+				} catch (ClassNotFoundException | IOException | SQLException e) {
 					System.err.println("Server couldnt send message!");
 					e.printStackTrace();
 				}

@@ -32,7 +32,9 @@ public abstract class AbstractHandler{
 	}
 	
 	//Abstract Methods
-	public abstract void processMsg();
+	public abstract void processMsg() throws SQLException;
+	public abstract boolean checkUserCredential() throws SQLException;
+		
 	//public abstract void buildResponseMsg();
 	
 	
@@ -45,10 +47,10 @@ public abstract class AbstractHandler{
 		this.connected=false;
 	}
 	
-	private static ResultSet executeQueryAgainstDB(String query) throws SQLException {
+	protected static ResultSet executeQueryAgainstDB(String tableName,String query) throws SQLException {
 		// Main steps required:
 		//		1. Get a connection to database
-		Connection myConn= DriverManager.getConnection("jdbc:mysql://localhost:3306/world","eldar","1234");
+		Connection myConn= DriverManager.getConnection("jdbc:mysql://localhost:3306/"+tableName,"eldar","1234");
 		//		2. Create a statement 
 		Statement myStmt= myConn.createStatement();
 		//		3. Execute SQL query

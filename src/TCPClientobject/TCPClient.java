@@ -73,7 +73,7 @@ class TCPClient_with_serialized {
 
 			break;
 		case Tenant:
-
+			//TODO update here ehat you did
 			break;
 		}
 
@@ -105,10 +105,10 @@ class TCPClient_with_serialized {
 		while (true){
 			int option=sc.nextInt();			
 			if (option==1) {
-				return Operation.Connect;							
+				return Operation.Login;							
 			}
 			else if (option==2){
-				return Operation.Update;
+				return Operation.SignUp;
 			}
 			System.out.println("wrong input! press 1 or 2");			
 		}		
