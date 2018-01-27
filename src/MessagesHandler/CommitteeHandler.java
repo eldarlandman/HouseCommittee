@@ -40,7 +40,7 @@ public class CommitteeHandler extends AbstractHandler {
 				setCommitteeCache();
 				break;
 			}
-			setResponseMsg(new ResponseMsg(true, "Incorrect userName or Password !", null));
+			setResponseMsg(new ResponseMsg(false, "Incorrect userName or Password !", null));
 
 			break;
 		case GET_BUILDING_PAYMENTS_BY_APARTMENT:
@@ -85,13 +85,14 @@ public class CommitteeHandler extends AbstractHandler {
 		//Create query(username,password)
 		String query=createQueryForLogIn(userName, password);
 		//answer=Execute query()
-		ResultSet answer=executeQueryAgainstDB("committeestable",query);
-		//return answer
-		return answer.first();
+		ResultSet answer=executeQueryAgainstDB(query);
+		//return answer- true if the cursor is on a valid row;
+		//false if there are no rows in the result set
+		return answer.first(); 
 	}
 
 	private String createQueryForLogIn(String userName, String password) {
-		return "SELECT committeesTable.ID from committeesTable WHERE userName="+userName+ "AND password="+password; 		
+		return "SELECT committeesTable.ID from committeesTable WHERE userName=\""+userName+ "\" AND password=\""+password+"\""; 		
 	}
 
 
