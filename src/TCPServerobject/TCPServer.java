@@ -29,6 +29,8 @@ class TCPServer implements Runnable{
 	public static void main(String argv[]) throws Exception 
 	{ 
 
+		
+		
 		Scanner sc=new Scanner(System.in);
 		System.out.println("insert listening number port:");		
 		int port=sc.nextInt();

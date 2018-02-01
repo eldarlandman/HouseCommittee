@@ -1,8 +1,9 @@
 package TCPClientobject;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
-
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -74,13 +75,14 @@ public class HouseCommittee extends Person  implements Runnable{
 			ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream() );
 
 			
-			Scanner sc=new Scanner(System.in);
-
+			//Scanner sc=new Scanner(System.in);
 			while (!userExist(outToServer,inFromServer)){				
+				BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
 				System.out.println("write your username:");
-				this.userName=sc.nextLine();
+				this.userName=br.readLine();
 				System.out.println("write your password:");
-				this.password=sc.nextLine();
+				this.password=br.readLine();
+				br.close();
 			}
 
 			
@@ -99,7 +101,7 @@ public class HouseCommittee extends Person  implements Runnable{
 
 				}					
 			}
-			sc.close();
+			
 
 
 		}

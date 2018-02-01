@@ -2,6 +2,8 @@ package MessagesHandler;
 
 
 
+import java.sql.SQLException;
+
 import Message.Message;
 import Message.RequestMsg;
 
@@ -17,6 +19,12 @@ public class TenantHandler extends AbstractHandler {
 		System.out.println("Server got Message from Tenant!");
 		
 		
+	}
+
+	@Override
+	public boolean checkUserCredential() throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.mysql.jdbc.CallableStatement;
+
 import Message.Message;
 import Message.RequestMsg;
 import Message.ResponseMsg;
@@ -53,7 +55,9 @@ public abstract class AbstractHandler{
 		Connection myConn= DriverManager.getConnection("jdbc:mysql://localhost:3306/housecommittee","eldar","1234");
 		//		2. Create a statement 
 		Statement myStmt= myConn.createStatement();
+		
 		//		3. Execute SQL query
+		
 		ResultSet myRs= myStmt.executeQuery(query);
 		//		4. process the result set  
 		return myRs;

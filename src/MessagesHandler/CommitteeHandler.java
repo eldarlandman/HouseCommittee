@@ -14,8 +14,10 @@ import Message.Message.Header;
 public class CommitteeHandler extends AbstractHandler {
 
 
-	public Map<Integer, int[]> TenantsTable=new HashMap<Integer, int[]>();
-
+	private Map<Integer, int[]> tenantsTable=new HashMap<Integer, int[]>();
+	private String username, password;
+	private ResultSet committeeDetails;
+	
 	public CommitteeHandler(RequestMsg req) {
 		super(0,req,null);
 	}
@@ -71,9 +73,38 @@ public class CommitteeHandler extends AbstractHandler {
 
 	//input: 
 	
-	private void setCommitteeCache() {
-		//this.TenantsTable= //TODO implement: Bring chache from DB
+	private void setCommitteeCache() throws SQLException {
+		int buildingID = retrieveBuildingIdFromDB();
+		ResultSet idRecord=executeQueryAgainstDB(SQLCommands.getTenantsOfCommittee(buildingID));
+		
+		while (idRecord.next()){
+			//get tenant id
+			int id=idRecord.getInt("id");
+			
+			//get payments of tenant with id
+			int[] payments=retrievePaymentsByIdFromDB(id);	
+			
+			//insert to hash map
+			this.tenantsTable.put(id,payments);
+		}
 
+	}
+
+	private int[] retrievePaymentsByIdFromDB(int tenant_id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private int retrieveBuildingIdFromDB() throws SQLException {
+		committeeDetails=executeQueryAgainstDB(SQLCommands.getCommitteeDetails(this.username,this.password));
+		int buildingID=-1;
+		if (committeeDetails.next()){			
+			buildingID=committeeDetails.getInt("building_id");
+		}
+		else{
+			System.err.println("building id for house committee have not been set yet!");			
+		}
+		return buildingID;
 	}
 
 	@Override
@@ -83,17 +114,19 @@ public class CommitteeHandler extends AbstractHandler {
 		String userName=args.get(0);
 		String password=args.get(1);
 		//Create query(username,password)
-		String query=createQueryForLogIn(userName, password);
+		String query=SQLCommands.login(userName, password);
 		//answer=Execute query()
 		ResultSet answer=executeQueryAgainstDB(query);
 		//return answer- true if the cursor is on a valid row;
 		//false if there are no rows in the result set
-		return answer.first(); 
+		if (answer.first()){
+			this.username=userName;
+			this.password=password;
+			return true;
+		}
+		return false; 
 	}
 
-	private String createQueryForLogIn(String userName, String password) {
-		return "SELECT committeesTable.ID from committeesTable WHERE userName=\""+userName+ "\" AND password=\""+password+"\""; 		
-	}
 
 
 
