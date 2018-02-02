@@ -46,6 +46,16 @@ public class CommitteeHandler extends AbstractHandler {
 
 			break;
 		case GET_BUILDING_PAYMENTS_BY_APARTMENT:
+			ArrayList<String> args=this.getRequestMsg().getArgs();
+			int tenantId=Integer.parseInt(args.get(0));
+			int[] payments=getPaymentsByTenantId(tenantId);
+			
+			if (payments!=null){				
+				setResponseMsg(new ResponseMsg(true, "All the payments of "+tenantId+" :", wrapArgsInArrayList(payments)));
+			}
+			else{
+				setResponseMsg(new ResponseMsg(false, "Wrong tenant id request", null));
+			}
 			break;
 		case DELETE_PAYMENTS:
 			break;
@@ -70,9 +80,27 @@ public class CommitteeHandler extends AbstractHandler {
 
 	}
 
+	private ArrayList<String> wrapArgsInArrayList(int[] payments) {
+		ArrayList<String> paymentsWrapped=new ArrayList<String>();
+		for (int payment: payments){
+			paymentsWrapped.add(""+payment);				
+		}
+		return paymentsWrapped;
+	}
+
 
 	//input: 
 	
+	private int[] getPaymentsByTenantId(int tenantId) {
+		
+		if (this.tenantsTable.get(new Integer(tenantId))!=null){
+			return this.tenantsTable.get(new Integer(tenantId));
+		}
+		
+		return null;
+		
+	}
+
 	private void setCommitteeCache() throws SQLException {
 		int buildingID = retrieveBuildingIdFromDB();
 		ResultSet idRecord=executeQueryAgainstDB(SQLCommands.getTenantsOfCommittee(buildingID));
@@ -90,12 +118,22 @@ public class CommitteeHandler extends AbstractHandler {
 
 	}
 
-	private int[] retrievePaymentsByIdFromDB(int tenant_id) {
-		// TODO Auto-generated method stub
-		return null;
+	private int[] retrievePaymentsByIdFromDB(int tenant_id) throws SQLException {
+		//loop on tenants_payments DB and where tenant_id=if_in_table take payment amount
+		//insert to array
+		int[] payments=new int[12];
+		int month, amount;
+		ResultSet paymentsRecord=executeQueryAgainstDB(SQLCommands.getTenantPayments(tenant_id) );
+		while (paymentsRecord.next()){
+			month=paymentsRecord.getInt("paid_month");
+			amount=paymentsRecord.getInt("paid_amount");
+			payments[month-1]=amount;
+		}
+		return payments;
 	}
 
 	private int retrieveBuildingIdFromDB() throws SQLException {
+		
 		committeeDetails=executeQueryAgainstDB(SQLCommands.getCommitteeDetails(this.username,this.password));
 		int buildingID=-1;
 		if (committeeDetails.next()){			

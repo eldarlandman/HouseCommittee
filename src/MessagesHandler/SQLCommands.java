@@ -2,9 +2,11 @@ package MessagesHandler;
 
 
 
-public class SQLCommands {
+public final class SQLCommands {
 
-	public static String login(String userName, String password){
+	private SQLCommands(){};
+	
+	public static String login(String userName, String password){		
 		return "SELECT committees.ID from committees WHERE user_name=\""+userName+ "\" AND password=\""+password+"\"";
 	}
 
@@ -25,11 +27,11 @@ public class SQLCommands {
 		return "SELECT * from Tenants WHERE user_name=\""+userName+ "\" AND password=\""+password+"\"";
 	}
 
-	public static String getTenantPayments(String tenantID){
-		return "SELECT paid_amount, paid_month from payments WHERE tenants_id=\""+tenantID+"\"";
+	public static String getTenantPayments(int tenantID){
+		return "SELECT paid_month, paid_amount  from tenants_payment WHERE tenant_id="+tenantID;
 	}
 
-//TODO: think about update concept: full update? once per time? when server disconnects?
+//TODO: think about update concept: full update? once per time? Maybe when server disconnects?
 //	public static String updateTenantPayments(String tenantID){
 //
 //	}
