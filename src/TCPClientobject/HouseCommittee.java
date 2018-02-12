@@ -93,13 +93,10 @@ public class HouseCommittee extends Person  implements Runnable{
 			while (!exit){
 				BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
 				displayMenu();
-				//options.options option=options.values()[sc.nextInt()] ;
-				//options option=options.LOG_OUT;
-				
-				Message.Header options=userOption(br);
+				Message.Header options=userOption();
 						
 				switch (options){
-				case LOGOUT: //payments
+				case LOGOUT: //
 					logOut();
 					clientSocket.close();
 					break;
@@ -109,6 +106,9 @@ public class HouseCommittee extends Person  implements Runnable{
 					
 					ArrayList<String> payments=getPaymentsOfTenant(br.read());
 					displayPayments(payments);
+				default:
+					
+					break;
 					
 
 				}
@@ -120,7 +120,7 @@ public class HouseCommittee extends Person  implements Runnable{
 
 		}
 		catch (IOException | ClassNotFoundException e) {
-			System.out.println("Cannot connect to port 10000");
+			System.out.println("ERROR");
 		}
 
 		//outToServer.writeObject();	
@@ -132,27 +132,33 @@ public class HouseCommittee extends Person  implements Runnable{
 		
 	}
 
-	private Header userOption(BufferedReader br) throws IOException {
-		String input=br.readLine();
-		int index=Integer.parseInt(input);
+	private Header userOption() throws IOException {
+		
+		
+			//String input=br.readLine();
+		/*int index=Integer.parseInt(input);
 		while (!(1<=index && index<=8)){
 			System.out.println("wrong input! try again");
 			displayMenu();
 			index=Integer.parseInt(br.readLine());
+			
+		}*/
+		//	Scanner input=new Scanner(System.in);
+			String opt="2";
+		switch (opt){
+		case "1": return Message.Header.LOGOUT;
+		case "2": return Message.Header.GET_TENANTS_PAYMENTS;
+		case "3": return Message.Header.GET_BUILDING_PAYMENTS_BY_APARTMENT;
+		case "4": return Message.Header.SET_NEW_BUILDING;
+		case "5": return Message.Header.UPDATE_PAYMENTS;
+		case "6": return Message.Header.DELETE_PAYMENTS;
+		case "7": return Message.Header.GET_MONTHLY_REVENUE;
+		case "8": return Message.Header.GET_CONTRACTOR;
+		case "9":return Message.Header.INSERT_CONTRACTOR;
 		}
-		switch (index){
-		case 1: return Message.Header.LOGOUT;
-		case 2: return Message.Header.GET_TENANTS_PAYMENTS;
-		case 3: return Message.Header.GET_BUILDING_PAYMENTS_BY_APARTMENT;
-		case 4: return Message.Header.GET_BUILDING_PAYMENTS_BY_MONTH;
-		case 5: return Message.Header.UPDATE_PAYMENTS;
-		case 6: return Message.Header.DELETE_PAYMENTS;
-		case 7: return Message.Header.GET_MONTHLY_REVENUE;
-		case 8: return Message.Header.GET_CONTRACTOR;
-		case 9:return Message.Header.INSERT_CONTRACTOR;		
-		
-		}
+		//input.close();
 		return null;
+		
 	}
 
 	private ArrayList<String> getPaymentsOfTenant(int arg) throws IOException, ClassNotFoundException {
@@ -168,7 +174,7 @@ public class HouseCommittee extends Person  implements Runnable{
 //	case 1: return Message.Header.LOGOUT;
 //	case 2: return Message.Header.GET_TENANTS_PAYMENTS;
 //	case 3: return Message.Header.GET_BUILDING_PAYMENTS_BY_APARTMENT;
-//	case 4: return Message.Header.GET_BUILDING_PAYMENTS_BY_MONTH;
+//	case 4: return Message.Header.GET_BUILDING_PAYMENTS_BY_MONTH; changed_>:should be set a new building
 //	case 5: return Message.Header.UPDATE_PAYMENTS;
 //	case 6: return Message.Header.DELETE_PAYMENTS;
 //	case 7: return Message.Header.GET_MONTHLY_REVENUE;
@@ -177,8 +183,14 @@ public class HouseCommittee extends Person  implements Runnable{
 		System.out.println("Choose one of the foloowing options:");
 		System.out.println("1. LogOut");
 		System.out.println("2. Get Monthly Payments of a practicular tenant");
-		System.out.println("3. Get Monthly Revenue of a practicular tenant");
-		//TODO: Complete all menu options!
+		System.out.println("3. Get Monthly Revenue of a practicular building");
+		System.out.println("4. Set New building ");
+		System.out.println("5. Update Monthly Payments of a practicular tenant  ");
+		System.out.println("6. Delete Payments of a practicular tenant  ");
+		System.out.println("7. Get Monthly Income of a practicular building  ");
+		System.out.println("8. Show All contractor that employed right now");
+		System.out.println("9. Set new contractor that was hired  ");
+		
 
 	}
 	private void logOut() throws IOException, ClassNotFoundException {

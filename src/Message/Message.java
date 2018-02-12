@@ -15,7 +15,7 @@ public abstract class Message implements Serializable{ //abstract class because 
 		LOGOUT,
 		GET_TENANTS_PAYMENTS,
 		GET_BUILDING_PAYMENTS_BY_APARTMENT,
-		GET_BUILDING_PAYMENTS_BY_MONTH,
+		SET_NEW_BUILDING,
 		UPDATE_PAYMENTS,
 		DELETE_PAYMENTS,
 		GET_MONTHLY_REVENUE,
