@@ -7,7 +7,7 @@ public final class SQLCommands {
 	private SQLCommands(){};
 	
 	public static String login(String userName, String password){		
-		return "SELECT committees.ID from committees WHERE user_name=\""+userName+ "\" AND password=\""+password+"\"";
+		return "SELECT committees.id from committees WHERE user_name=\""+userName+ "\" AND password=\""+password+"\"";
 	}
 
 	public static String getCommitteeDetails(String userName, String password){
