@@ -45,7 +45,7 @@ public class CommitteeHandler extends AbstractHandler {
 			setResponseMsg(new ResponseMsg(false, "Incorrect userName or Password !", null));
 
 			break;
-		case GET_BUILDING_PAYMENTS_BY_APARTMENT:
+		case GET_ALL_TENANTS_PAYMENTS:
 			ArrayList<String> args=this.getRequestMsg().getArgs();
 			int tenantId=Integer.parseInt(args.get(0));
 			int[] payments=getPaymentsByTenantId(tenantId);
@@ -57,23 +57,23 @@ public class CommitteeHandler extends AbstractHandler {
 				setResponseMsg(new ResponseMsg(false, "Wrong tenant id request", null));
 			}
 			break;
-		case DELETE_PAYMENTS:
+		case DELETE_TENANT_PAYMENT_BY_MONTH:
+			break;
+		case GET_BUILDING_MONTHLY_REVENUE:
 			break;
 		case GET_BUILDING_PAYMENTS_BY_MONTH:
 			break;
 		case GET_CONTRACTOR:
 			break;
-		case GET_MONTHLY_REVENUE:
-			break;
-		case GET_TENANTS_PAYMENTS:
+		case GET__PAYMENTS_BY_TENANT_ID:
 			break;
 		case INSERT_CONTRACTOR:
 			break;
-		case UPDATE_PAYMENTS:
+		case UPDATE_TENANT_PAYMENT_BY_MONTH:
 			break;
 		default:
 			break;
-
+		
 			//TODO: Implement other cases
 
 		}
