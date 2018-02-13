@@ -31,15 +31,17 @@ public class HouseCommittee extends Person  implements Runnable{
 	private String userName;
 	private String password;
 	private boolean exit;
+	private Scanner sc;
 	int sumOfpayments;
 	private ObjectOutputStream outToServer;
 	//Data bases for chache data:
 	private ObjectInputStream inFromServer;
 	
 
-	public HouseCommittee(String userName, String password){
+	public HouseCommittee(String userName, String password, Scanner sc){
 		this.setPassword(password);
 		this.setUserName(userName);
+		this.sc=sc;
 		this.exit=false;
 	}
 
@@ -93,7 +95,7 @@ public class HouseCommittee extends Person  implements Runnable{
 			while (!exit){
 				BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
 				displayMenu();
-				Message.Header options=userOption();
+				Message.Header options=userOption(br);
 						
 				switch (options){
 				case LOGOUT: //
@@ -101,7 +103,7 @@ public class HouseCommittee extends Person  implements Runnable{
 					clientSocket.close();
 					break;
 					//send
-				case GET_TENANTS_PAYMENTS:
+				case GET_ALL_TENANTS_PAYMENTS:
 					System.out.println("insert tenant id:");
 					
 					ArrayList<String> payments=getPaymentsOfTenant(br.read());
@@ -132,37 +134,33 @@ public class HouseCommittee extends Person  implements Runnable{
 		
 	}
 
-	private Header userOption() throws IOException {
+	private Header userOption(BufferedReader br) throws IOException {
 		
-		
-			//String input=br.readLine();
-		/*int index=Integer.parseInt(input);
+			String input=br.readLine();
+		int index=Integer.parseInt(input);
 		while (!(1<=index && index<=8)){
 			System.out.println("wrong input! try again");
 			displayMenu();
 			index=Integer.parseInt(br.readLine());
 			
-		}*/
-		//	Scanner input=new Scanner(System.in);
-			String opt="2";
-		switch (opt){
-		case "1": return Message.Header.LOGOUT;
-		case "2": return Message.Header.GET_TENANTS_PAYMENTS;
-		case "3": return Message.Header.GET_BUILDING_PAYMENTS_BY_APARTMENT;
-		case "4": return Message.Header.SET_NEW_BUILDING;
-		case "5": return Message.Header.UPDATE_PAYMENTS;
-		case "6": return Message.Header.DELETE_PAYMENTS;
-		case "7": return Message.Header.GET_MONTHLY_REVENUE;
-		case "8": return Message.Header.GET_CONTRACTOR;
-		case "9":return Message.Header.INSERT_CONTRACTOR;
+		switch (index){
+		case 1: return Message.Header.LOGOUT;
+		case 2: return Message.Header.GET_ALL_TENANTS_PAYMENTS;
+		case 3: return Message.Header.GET_PAYMENTS_BY_TENANT_ID;
+		case 4: return Message.Header.SET_NEW_BUILDING;
+		case 5: return Message.Header.UPDATE_TENANT_PAYMENT_BY_MONTH;
+		case 6: return Message.Header.DELETE_TENANT_PAYMENT_BY_MONTH;
+		case 7: return Message.Header.GET_BUILDING_MONTHLY_REVENUE;
+		case 8: return Message.Header.GET_CONTRACTOR;
+		case 9:return Message.Header.INSERT_CONTRACTOR;
 		}
-		//input.close();
+		}
 		return null;
 		
 	}
 
 	private ArrayList<String> getPaymentsOfTenant(int arg) throws IOException, ClassNotFoundException {
-		Message msg=new RequestMsg(Header.GET_TENANTS_PAYMENTS, Sender.COMMITTEE, wrapArgInArrayList(arg)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		Message msg=new RequestMsg(Header.GET_ALL_TENANTS_PAYMENTS, Sender.COMMITTEE, wrapArgInArrayList(arg)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
 		outToServer.writeObject(msg);
 		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
 		System.out.println(response.getMsgInfo());

@@ -67,7 +67,7 @@ class TCPClient_with_serialized {
 		switch(mode){
 		case HouseCommittee:
 			//Create houseCom object with password and user name
-			HouseCommittee hc=new HouseCommittee(userName, password);			
+			HouseCommittee hc=new HouseCommittee(userName, password,sc);			
 			//Run thread on this object which establish a connection and ask verification against DB
 			new Thread(hc).start();
 
