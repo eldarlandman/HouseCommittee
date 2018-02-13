@@ -14,7 +14,7 @@ import Message.Message.Header;
 public class CommitteeHandler extends AbstractHandler {
 
 
-	private Map<Integer, int[]> tenantsTable=new HashMap<Integer, int[]>();
+	private Map<Integer,int[]> tenantsTable=new HashMap<Integer, int[]>();
 	private String username, password;
 	private ResultSet committeeDetails;
 	
@@ -23,14 +23,17 @@ public class CommitteeHandler extends AbstractHandler {
 	}
 
 	public CommitteeHandler(int reqNum, RequestMsg req, ResponseMsg res) {
-		super(reqNum, req, res);
+		super(reqNum, req, res);	
 		
 	}
 
 	@Override
 	public void processMsg() throws SQLException {
 		Message currMsg=super.getRequestMsg();
+		ArrayList<String> args=currMsg.getArgs();
 		Header currHeader=((RequestMsg)currMsg).getHeader();
+				
+		
 		switch (currHeader){
 		case LOGOUT:
 			disconnect();
@@ -46,7 +49,7 @@ public class CommitteeHandler extends AbstractHandler {
 
 			break;
 		case GET_ALL_TENANTS_PAYMENTS:
-			ArrayList<String> args=this.getRequestMsg().getArgs();
+			args=currMsg.getArgs();
 			int tenantId=Integer.parseInt(args.get(0));
 			int[] payments=getPaymentsByTenantId(tenantId);
 			
@@ -54,10 +57,20 @@ public class CommitteeHandler extends AbstractHandler {
 				setResponseMsg(new ResponseMsg(true, "All the payments of "+tenantId+" :", wrapArgsInArrayList(payments)));
 			}
 			else{
-				setResponseMsg(new ResponseMsg(false, "Wrong tenant id request", null));
+				setResponseMsg(new ResponseMsg(false, "Invalid tenantId!", null));
 			}
 			break;
 		case DELETE_TENANT_PAYMENT_BY_MONTH:
+			tenantId=Integer.parseInt(args.get(0));
+			int monthOfPayment=Integer.parseInt(args.get(1));
+			payments=getPaymentsByTenantId(monthOfPayment);
+			if (monthOfPayment>=1 && monthOfPayment<=12 && payments!=null){				
+				payments[monthOfPayment-1]=0;
+				setResponseMsg(new ResponseMsg(true, "monthly payment of month "+monthOfPayment+" and tenants id="+tenantId+" deleted!",null));				
+			}
+			else{
+				setResponseMsg(new ResponseMsg(false, "Invalid tenantId or month!", null));
+			}
 			break;
 		case GET_BUILDING_MONTHLY_REVENUE:
 			break;

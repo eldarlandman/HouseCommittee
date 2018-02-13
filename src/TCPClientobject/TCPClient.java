@@ -62,15 +62,17 @@ class TCPClient_with_serialized {
 		String userName=sc.nextLine();
 		System.out.println("write your password:");
 		String password=sc.nextLine();
-		sc.close();		
+		//sc.close();		
 	
 		switch(mode){
 		case HouseCommittee:
 			//Create houseCom object with password and user name
-			HouseCommittee hc=new HouseCommittee(userName, password);			
+			HouseCommittee hc=new HouseCommittee(userName, password,sc);			
 			//Run thread on this object which establish a connection and ask verification against DB
-			new Thread(hc).start();
-
+			Thread t=new Thread(hc);
+			t.start();
+			t.join();
+			
 			break;
 		case Tenant:
 			//TODO update here ehat you did

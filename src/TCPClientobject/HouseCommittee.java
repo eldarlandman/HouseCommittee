@@ -22,22 +22,26 @@ import Message.Message.Header;
 import Message.Message.Sender;
 
 public class HouseCommittee extends Person  implements Runnable{
-	/**
-	 * 
-	 */
-	private enum options{LOG_OUT}//TODO Fill all options
+	
+//	System.out.println("1. LogOut");
+//	System.out.println("2. Get Monthly Payments of a practicular tenant");
+//	System.out.println("3. Get Monthly Revenue of a practicular tenant");
+//	
+	private enum options{LOG_OUT,MONTHLY_PAYMENTS_OF_TENANT,MONTHLY_REVENUE_OF_TENANT}//TODO Fill all options
 	private static final long serialVersionUID = 1L;
 	public int seniority;
 	private String userName;
 	private String password;
 	private boolean exit;
+	private Scanner sc;
 	int sumOfpayments;
 	//Data bases for chache data:
 	
 
-	public HouseCommittee(String userName, String password){
+	public HouseCommittee(String userName, String password, Scanner sc){
 		this.setPassword(password);
 		this.setUserName(userName);
+		this.sc=sc;
 		this.exit=false;
 	}
 
@@ -75,14 +79,13 @@ public class HouseCommittee extends Person  implements Runnable{
 			ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream() );
 
 			
-			//Scanner sc=new Scanner(System.in);
-			while (!userExist(outToServer,inFromServer)){				
-				BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+			//check against server this.username and this.password and returns true if server finds them in DB
+			while (!userExist(outToServer,inFromServer)){		
+				
 				System.out.println("write your username:");
-				this.userName=br.readLine();
+				this.userName=sc.nextLine();
 				System.out.println("write your password:");
-				this.password=br.readLine();
-				br.close();
+				this.password=sc.nextLine();				
 			}
 
 			
@@ -90,27 +93,52 @@ public class HouseCommittee extends Person  implements Runnable{
 			while (!exit){
 
 				displayMenu();
-				//options.options option=options.values()[sc.nextInt()] ;
-				options option=options.LOG_OUT;
+				String input=sc.nextLine();
+				options option=getOptionFromInt(Integer.parseInt(input));
 				switch (option){
 				case LOG_OUT: //payments
 					logOut(outToServer, inFromServer);
-					clientSocket.close();
+					
 					break;
 					//send
+				case MONTHLY_PAYMENTS_OF_TENANT:
+					System.out.println("input tenant id:");
+					int id=Integer.parseInt(sc.nextLine());
+					System.out.println("input month:");
+					int month=Integer.parseInt(sc.nextLine());
+					break;
+				case MONTHLY_REVENUE_OF_TENANT:
+					break;
+				default:
+					break;
 
 				}					
 			}
-			
-
+			sc.close();
 
 		}
 		catch (IOException | ClassNotFoundException e) {
 			System.out.println("Cannot connect to port 1000");
+			
 		}
 
 		//outToServer.writeObject();	
 
+	}
+
+	private options getOptionFromInt(int parseInt) {
+		switch(parseInt){
+		case 1:
+			return options.LOG_OUT; 			
+		case 2:
+			return options.MONTHLY_PAYMENTS_OF_TENANT;
+		case 3:
+			return options.MONTHLY_REVENUE_OF_TENANT;
+		
+		default:
+			System.out.println("wrong input!");
+		}
+		return null;
 	}
 
 	private void displayMenu() {
