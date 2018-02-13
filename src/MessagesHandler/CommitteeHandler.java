@@ -60,7 +60,7 @@ public class CommitteeHandler extends AbstractHandler {
 				setResponseMsg(new ResponseMsg(false, "Invalid tenantId!", null));
 			}
 			break;
-		/*case GET_BUILDING_PAYMENTS_BY_APARTMENT://choose a building id and it will show all the payments
+		case GET_BUILDING_PAYMENTS_BY_APARTMENT://choose a building id and it will show all the payments
 			tenantId=Integer.parseInt(args.get(0));
 			int monthOfPayment=Integer.parseInt(args.get(1));
 			payments=getPaymentsByTenantId(monthOfPayment);
@@ -72,10 +72,7 @@ public class CommitteeHandler extends AbstractHandler {
 				setResponseMsg(new ResponseMsg(false, "Invalid tenantId or month!", null));
 			}
 			break;
-			*/
-		case GET_BUILDING_PAYMENTS_BY_APARTMENT:
 			
-			break;
 		case SET_NEW_BUILDING:
 			break;
 		case UPDATE_TENANT_PAYMENT_BY_MONTH:
@@ -117,7 +114,14 @@ public class CommitteeHandler extends AbstractHandler {
 		}
 		
 		return null;
+	}
+	private int[] getPaymentsByBuildingId(int buildingId) {
 		
+		if (this.tenantsTable.get(new Integer(buildingId))!=null){
+			return this.tenantsTable.get(new Integer(buildingId));
+		}
+		
+		return null;
 	}
 
 	private void setCommitteeCache() throws SQLException {
@@ -150,6 +154,7 @@ public class CommitteeHandler extends AbstractHandler {
 		}
 		return payments;
 	}
+	
 
 	private int retrieveBuildingIdFromDB() throws SQLException {
 		

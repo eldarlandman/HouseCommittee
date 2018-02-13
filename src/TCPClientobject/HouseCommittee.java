@@ -34,19 +34,7 @@ public class HouseCommittee extends Person  implements Runnable{
 		GET_BUILDING_MONTHLY_REVENUE,
 		GET_CONTRACTOR,
 		SET_CONTRACTOR,}
-	/*private enum month{
-		January,
-		February,
-		March,
-		April,
-		May,
-		June,
-		July ,
-		August,
-		September, 
-		October, 
-		November, 
-		December }*/
+	
 	private static final long serialVersionUID = 1L;
 	public int seniority;
 	private String userName;
@@ -125,34 +113,52 @@ public class HouseCommittee extends Person  implements Runnable{
 					break;
 					
 				case GET_PAYMENTS_BY_TENANT_ID:
+					getPaymentsByTenantId();
 					
-					System.out.println("input tenant id:");
-					int id=Integer.parseInt(sc.nextLine());
-					ArrayList<String> payments=getPaymentsOfTenant(id);
-					displayPayments(payments);
 					break;
 				case GET_BUILDING_PAYMENTS_BY_APARTMENT:
 					//TODO -->
 					//get building id 
 					//get payment of each tenant with building id that was received
 					//display payments for each tenant with building id that was received
-					System.out.println("input building id:");
-					int building_id=Integer.parseInt(sc.nextLine());
-					ArrayList<String> building_payments=getPaymentsOfBuilding(building_id);
-					displayPayments(building_payments);
-					
+					getBuildingPaymentsByApartament();
 					break;
 				case SET_NEW_BUILDING:
+					//TODO -->
+					//get as input new tenants
+					//create new building with new id and put a new tenant to building
+					setNewBuilding();
 					break;
 				case UPDATE_TENANT_PAYMENT_BY_MONTH:
+					//TODO -->
+					//get as input tenant apartament_number & month
+					//update payment in DB by the info from input
+					updateTenantPaymentByMonth();
 					break;
 				case DELETE_TENANT_PAYMENT_BY_MONTH:
+					//TODO -->
+					//get as input apartament_number & month
+					//set payment in DB by the info to zero
+					deleteTenantPaymentByMonth();
 					break;
 				case GET_BUILDING_MONTHLY_REVENUE:
+					//TODO -->
+					//get as input buildingID
+					//display all income of building that been selected
+					getBuildingMonthlyRevenue();
 					break;
 				case GET_CONTRACTOR:
+					//TODO -->
+					//display all contractor
+					getContractor();
 					break;
 				case SET_CONTRACTOR:
+					//TODO -->
+					//get as input contractor profession 
+					//check if already exist 
+					//if not add to DB else give out put "already exist"
+					setContractor();
+					
 					break;
 					
 				default: 
@@ -171,6 +177,88 @@ public class HouseCommittee extends Person  implements Runnable{
 
 		//outToServer.writeObject();	
 
+	}
+
+	private void setContractor() {
+		// TODO Auto-generated method stub
+		System.out.println("input Constractor id:");
+		int id=Integer.parseInt(sc.nextLine());
+		System.out.println("input Constractor name:");
+		String name=(sc.nextLine());//input string????
+		System.out.println("input Constractor last name:");
+		String last_name=(sc.nextLine());//input string????
+		System.out.println("input Constractor phone:");
+		int phone=Integer.parseInt(sc.nextLine());
+		System.out.println("input Constractor profession:");
+		String profession=(sc.nextLine());//input string????
+	}
+
+	private void getContractor() {
+		
+		//TODO displayConstractor();
+	}
+
+	private void getBuildingMonthlyRevenue() {
+		// TODO Auto-generated method stub
+		System.out.println("input building id:");
+		int building_id=Integer.parseInt(sc.nextLine());
+		System.out.println("input number of month :");//for January insert 0.....
+		int month=Integer.parseInt(sc.nextLine());
+	}
+
+	private void deleteTenantPaymentByMonth() {
+		// TODO Auto-generated method stub
+		System.out.println("input apartament number:");
+		int apartament_number=Integer.parseInt(sc.nextLine());
+		System.out.println("input number of month :");//for January insert 0.....
+		int month=Integer.parseInt(sc.nextLine());
+	}
+
+	private void updateTenantPaymentByMonth() {
+		// TODO Auto-generated method stub
+		System.out.println("input apartament number:");
+		int apartament_number=Integer.parseInt(sc.nextLine());
+		System.out.println("input number of month :");//for January insert 0.....
+		int month=Integer.parseInt(sc.nextLine());
+	}
+
+	private void getBuildingPaymentsByApartament() throws ClassNotFoundException, IOException {
+		System.out.println("input building id:");
+		int building_id=Integer.parseInt(sc.nextLine());
+		ArrayList<String> building_payments=getPaymentsOfBuilding(building_id);
+		displayPayments(building_payments);
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void setNewBuilding() {
+		System.out.println("input Tenant id:");
+		int id=Integer.parseInt(sc.nextLine());
+		System.out.println("input Tenant user:");
+		String user=(sc.nextLine());//input string????
+		System.out.println("input Tenant password:");
+		int password=Integer.parseInt(sc.nextLine());
+		System.out.println("input Tenant monthly payment amount:");
+		int payment_amount=Integer.parseInt(sc.nextLine());
+		System.out.println("input Tenant apartament number:");
+		int apartament=Integer.parseInt(sc.nextLine());
+		System.out.println("input Tenant  name:");
+		String name=(sc.nextLine());//input string????
+		System.out.println("input Tenant last name:");
+		String last_name=(sc.nextLine());//input string????
+		System.out.println("input Tenant building id:");
+		int building_id=Integer.parseInt(sc.nextLine());
+		
+		
+	}
+	
+	private void getPaymentsByTenantId() throws ClassNotFoundException, IOException {
+		System.out.println("input tenant id:");
+		int id=Integer.parseInt(sc.nextLine());
+		ArrayList<String> payments=getPaymentsOfTenant(id);
+		displayPayments(payments);
+		
 	}
 
 	private void displayPayments(ArrayList<String> payments) {
@@ -223,7 +311,7 @@ public class HouseCommittee extends Person  implements Runnable{
 		System.out.println("7. Get Monthly Income of a practicular building  ");
 		System.out.println("8. Show All contractor that employed right now");
 		System.out.println("9. Set new contractor that was hired  ");
-		//TODO: done
+		
 
 	}
 	private void logOut(ObjectOutputStream outToServer, ObjectInputStream inFromServer) throws IOException, ClassNotFoundException {
