@@ -7,13 +7,13 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.util.Scanner;
 
-import com.sun.xml.internal.bind.v2.Messages;
+
 
 import Message.RequestMsg;
 import Message.ResponseMsg;
@@ -22,20 +22,41 @@ import Message.Message.Header;
 import Message.Message.Sender;
 
 public class HouseCommittee extends Person  implements Runnable{
-	/**
-	 * 
-	 */
-	private enum options{LOG_OUT}//TODO Fill all options
+	
+
+	private enum options{
+		LOG_OUT,
+		GET_PAYMENTS_BY_TENANT_ID,
+		GET_BUILDING_PAYMENTS_BY_APARTMENT,
+		SET_NEW_BUILDING,
+		UPDATE_TENANT_PAYMENT_BY_MONTH,
+		DELETE_TENANT_PAYMENT_BY_MONTH,
+		GET_BUILDING_MONTHLY_REVENUE,
+		GET_CONTRACTOR,
+		SET_CONTRACTOR,}
+	/*private enum month{
+		January,
+		February,
+		March,
+		April,
+		May,
+		June,
+		July ,
+		August,
+		September, 
+		October, 
+		November, 
+		December }*/
 	private static final long serialVersionUID = 1L;
 	public int seniority;
 	private String userName;
 	private String password;
 	private boolean exit;
 	private Scanner sc;
-	int sumOfpayments;
 	private ObjectOutputStream outToServer;
-	//Data bases for chache data:
 	private ObjectInputStream inFromServer;
+	int sumOfpayments;
+	//Data bases for chache data:
 	
 
 	public HouseCommittee(String userName, String password, Scanner sc){
@@ -78,51 +99,74 @@ public class HouseCommittee extends Person  implements Runnable{
 			ObjectOutputStream  outToServer = new ObjectOutputStream (clientSocket.getOutputStream() );
 			ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream() );
 			this.outToServer=outToServer;
-					this.inFromServer=inFromServer;
+			this.inFromServer=inFromServer;
+
 			
-			//Scanner sc=new Scanner(System.in);
-			while (!userExist()){				
-				BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+			//check against server this.username and this.password and returns true if server finds them in DB
+			while (!userExist(outToServer,inFromServer)){		
+				
 				System.out.println("write your username:");
-				this.userName=br.readLine();
+				this.userName=sc.nextLine();
 				System.out.println("write your password:");
-				this.password=br.readLine();
-				br.close();
+				this.password=sc.nextLine();				
 			}
 
 			
 			//start exchanging data with the server
 			while (!exit){
-				BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
+
 				displayMenu();
-				Message.Header options=userOption(br);
-						
-				switch (options){
-				case LOGOUT: //
-					logOut();
-					clientSocket.close();
-					break;
-					//send
-				case GET_ALL_TENANTS_PAYMENTS:
-					System.out.println("insert tenant id:");
+				String input=sc.nextLine();
+				options option=getOptionFromInt(Integer.parseInt(input));
+				switch (option){
+				case LOG_OUT: //logout
+					logOut(outToServer, inFromServer);
 					
-					ArrayList<String> payments=getPaymentsOfTenant(br.read());
+					break;
+					
+				case GET_PAYMENTS_BY_TENANT_ID:
+					
+					System.out.println("input tenant id:");
+					int id=Integer.parseInt(sc.nextLine());
+					ArrayList<String> payments=getPaymentsOfTenant(id);
 					displayPayments(payments);
-				default:
+					break;
+				case GET_BUILDING_PAYMENTS_BY_APARTMENT:
+					//TODO -->
+					//get building id 
+					//get payment of each tenant with building id that was received
+					//display payments for each tenant with building id that was received
+					System.out.println("input building id:");
+					int building_id=Integer.parseInt(sc.nextLine());
+					ArrayList<String> building_payments=getPaymentsOfBuilding(building_id);
+					displayPayments(building_payments);
 					
 					break;
+				case SET_NEW_BUILDING:
+					break;
+				case UPDATE_TENANT_PAYMENT_BY_MONTH:
+					break;
+				case DELETE_TENANT_PAYMENT_BY_MONTH:
+					break;
+				case GET_BUILDING_MONTHLY_REVENUE:
+					break;
+				case GET_CONTRACTOR:
+					break;
+				case SET_CONTRACTOR:
+					break;
 					
+				default: 
+					
+					break;
 
-				}
-				
-				br.close();
+				}					
 			}
-			
-
-
+			sc.close();
+	
 		}
 		catch (IOException | ClassNotFoundException e) {
-			System.out.println("ERROR");
+			System.out.println("error");
+			
 		}
 
 		//outToServer.writeObject();	
@@ -130,54 +174,45 @@ public class HouseCommittee extends Person  implements Runnable{
 	}
 
 	private void displayPayments(ArrayList<String> payments) {
-		System.out.println("payments should be displayed here!"); //TODO: implement display payments to house_committee
-		
-	}
-
-	private Header userOption(BufferedReader br) throws IOException {
-		
-			String input=br.readLine();
-		int index=Integer.parseInt(input);
-		while (!(1<=index && index<=8)){
-			System.out.println("wrong input! try again");
-			displayMenu();
-			index=Integer.parseInt(br.readLine());
-			
-		switch (index){
-		case 1: return Message.Header.LOGOUT;
-		case 2: return Message.Header.GET_ALL_TENANTS_PAYMENTS;
-		case 3: return Message.Header.GET_PAYMENTS_BY_TENANT_ID;
-		case 4: return Message.Header.SET_NEW_BUILDING;
-		case 5: return Message.Header.UPDATE_TENANT_PAYMENT_BY_MONTH;
-		case 6: return Message.Header.DELETE_TENANT_PAYMENT_BY_MONTH;
-		case 7: return Message.Header.GET_BUILDING_MONTHLY_REVENUE;
-		case 8: return Message.Header.GET_CONTRACTOR;
-		case 9:return Message.Header.INSERT_CONTRACTOR;
+		String month[] ={"January","February","March","April","May","June","July","August","September","October","November", "December" } ;
+		int i=0;
+		for (String arr : payments) {
+			 System.out.println("payment for "+month[i]+" = ");
+            System.out.println(arr);
+            i++;
 		}
+	
+	}
+	private options getOptionFromInt(int parseInt) {
+		switch(parseInt){
+		case 1:
+			return options.LOG_OUT; 			
+		case 2:
+			return options.GET_PAYMENTS_BY_TENANT_ID;
+		case 3:
+			return options.GET_BUILDING_PAYMENTS_BY_APARTMENT;
+		case 4:
+			return options.SET_NEW_BUILDING;
+		case 5:
+			return options.UPDATE_TENANT_PAYMENT_BY_MONTH;
+		case 6:
+			return options.DELETE_TENANT_PAYMENT_BY_MONTH;
+		case 7:
+			return options.GET_BUILDING_MONTHLY_REVENUE;
+		case 8:
+			return options.GET_CONTRACTOR;
+		case 9:
+			return options.SET_CONTRACTOR;
+			
+		default:
+			System.out.println("wrong input!");
 		}
 		return null;
 		
-	}
-
-	private ArrayList<String> getPaymentsOfTenant(int arg) throws IOException, ClassNotFoundException {
-		Message msg=new RequestMsg(Header.GET_ALL_TENANTS_PAYMENTS, Sender.COMMITTEE, wrapArgInArrayList(arg)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
-		outToServer.writeObject(msg);
-		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
-		System.out.println(response.getMsgInfo());
-		
-		return response.getArgs();
+			
 	}
 
 	private void displayMenu() {
-//	case 1: return Message.Header.LOGOUT;
-//	case 2: return Message.Header.GET_TENANTS_PAYMENTS;
-//	case 3: return Message.Header.GET_BUILDING_PAYMENTS_BY_APARTMENT;
-//	case 4: return Message.Header.GET_BUILDING_PAYMENTS_BY_MONTH; changed_>:should be set a new building
-//	case 5: return Message.Header.UPDATE_PAYMENTS;
-//	case 6: return Message.Header.DELETE_PAYMENTS;
-//	case 7: return Message.Header.GET_MONTHLY_REVENUE;
-//	case 8: return Message.Header.GET_CONTRACTOR;
-//	case 9:return Message.Header.INSERT_CONTRACTOR;
 		System.out.println("Choose one of the foloowing options:");
 		System.out.println("1. LogOut");
 		System.out.println("2. Get Monthly Payments of a practicular tenant");
@@ -188,28 +223,33 @@ public class HouseCommittee extends Person  implements Runnable{
 		System.out.println("7. Get Monthly Income of a practicular building  ");
 		System.out.println("8. Show All contractor that employed right now");
 		System.out.println("9. Set new contractor that was hired  ");
-		
+		//TODO: done
 
 	}
-	private void logOut() throws IOException, ClassNotFoundException {
-		Message msg=new RequestMsg(Header.LOGOUT, Sender.COMMITTEE, null); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+	private void logOut(ObjectOutputStream outToServer, ObjectInputStream inFromServer) throws IOException, ClassNotFoundException {
+		Message msg=new RequestMsg(Header.LOG_OUT, Sender.COMMITTEE, null); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
 		outToServer.writeObject(msg);
 		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
 		System.out.println(response.getMsgInfo());
 		exit=true;
 		
-		
-	}
-
-	private boolean userExist() throws IOException, ClassNotFoundException {
-		ArrayList<String> args=new ArrayList<String>(Arrays.asList(this.userName,this.password));
-		Message msg=new RequestMsg(Header.LOGIN, Sender.COMMITTEE, args); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		}
+	//EX1
+	private ArrayList<String> getPaymentsOfTenant(int arg) throws IOException, ClassNotFoundException {
+		Message msg=new RequestMsg(Header.GET_PAYMENTS_BY_TENANT_ID, Sender.COMMITTEE, wrapArgInArrayList(arg)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
 		outToServer.writeObject(msg);
 		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
 		System.out.println(response.getMsgInfo());
-		return response.isSucceed();
-
-
+		
+		return response.getArgs();
+	}
+	//EX2
+	private ArrayList<String> getPaymentsOfBuilding(int arg) throws IOException, ClassNotFoundException {
+		Message msg=new RequestMsg(Header.GET_BUILDING_PAYMENTS_BY_APARTMENT, Sender.COMMITTEE, wrapArgInArrayList(arg)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		return response.getArgs();
 	}
 	
 	private ArrayList<String> wrapArgInArrayList(int arg) {
@@ -218,4 +258,16 @@ public class HouseCommittee extends Person  implements Runnable{
 		return argWrapped;
 	}
 
+	private boolean userExist(ObjectOutputStream outToServer, ObjectInputStream inFromServer) throws IOException, ClassNotFoundException {
+		ArrayList<String> args=new ArrayList<String>(Arrays.asList(this.userName,this.password));
+		Message msg=new RequestMsg(Header.LOGIN, Sender.COMMITTEE, args); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		return response.isSucceed();
+
+	}
+	
 }
+	
+
