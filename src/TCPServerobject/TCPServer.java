@@ -31,14 +31,15 @@ class TCPServer implements Runnable{
 
 		
 		
-		Scanner sc=new Scanner(System.in);
+		//Scanner sc=new Scanner(System.in);
 		System.out.println("insert listening number port:");		
-		int port=sc.nextInt();
+		int port=10000;
+				//sc.nextInt();
 		TCPServer server=new TCPServer(port); 
 
 		new Thread(server).start(); 
 
-		sc.close();
+		//sc.close();
 		Thread.currentThread().join(); //the main thread is waiting for sun thread to finish
 
 	}

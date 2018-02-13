@@ -52,7 +52,7 @@ public abstract class AbstractHandler{
 	protected static ResultSet executeQueryAgainstDB(String query) throws SQLException {
 		// Main steps required:
 		//		1. Get a connection to database
-		Connection myConn= DriverManager.getConnection("jdbc:mysql://localhost:3306/housecommittee","eldar","1234");
+		Connection myConn= DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/house?autoReconnect=true&useSSL=false","root","1234");
 		//		2. Create a statement 
 		Statement myStmt= myConn.createStatement();
 		

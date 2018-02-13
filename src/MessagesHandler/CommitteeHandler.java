@@ -74,8 +74,7 @@ public class CommitteeHandler extends AbstractHandler {
 			break;
 		case GET_BUILDING_MONTHLY_REVENUE:
 			break;
-		case GET_BUILDING_PAYMENTS_BY_MONTH:
-			break;
+		
 		case GET_CONTRACTOR:
 			break;
 		case GET__PAYMENTS_BY_TENANT_ID:
