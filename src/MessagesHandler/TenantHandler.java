@@ -29,7 +29,7 @@ public class TenantHandler extends AbstractHandler {
 	
 	//@Override
 	public void processMsg() throws SQLException {
-		// TODO Implement- same concept like Committee
+		
 		Message currMsg=super.getRequestMsg();
 		ArrayList<String> args=currMsg.getArgs();
 		Header currHeader=((RequestMsg)currMsg).getHeader();
@@ -112,7 +112,7 @@ private void setTenantCache() throws SQLException {
 	}
 private int retrieveBuildingIdFromDB() throws SQLException {
 		
-	TenantDetails=executeQueryAgainstDB(SQLCommands.getCommitteeDetails(this.username,this.password));
+	TenantDetails=executeQueryAgainstDB(SQLCommands.getTenantDetail(this.username,this.password));
 		int buildingID=-1;
 		if (TenantDetails.next()){			
 			buildingID=TenantDetails.getInt("building_id");
@@ -130,7 +130,7 @@ private int retrieveBuildingIdFromDB() throws SQLException {
 				String userName=args.get(0);
 				String password=args.get(1);
 				//Create query(username,password)
-				String query=SQLCommands.login(userName, password);
+				String query=SQLCommands.loginTenant(userName, password);
 				//answer=Execute query()
 				ResultSet answer=executeQueryAgainstDB(query);
 				//return answer- true if the cursor is on a valid row;

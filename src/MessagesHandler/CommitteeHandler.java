@@ -115,14 +115,7 @@ public class CommitteeHandler extends AbstractHandler {
 		
 		return null;
 	}
-	private int[] getPaymentsByBuildingId(int buildingId) {
-		
-		if (this.tenantsTable.get(new Integer(buildingId))!=null){
-			return this.tenantsTable.get(new Integer(buildingId));
-		}
-		
-		return null;
-	}
+	
 
 	private void setCommitteeCache() throws SQLException {
 		int buildingID = retrieveBuildingIdFromDB();

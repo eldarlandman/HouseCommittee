@@ -194,8 +194,20 @@ public class HouseCommittee extends Person  implements Runnable{
 	}
 
 	private void getContractor() {
+		System.out.println("This is the list of all contractors that hierd right now:");
 		
-		//TODO displayConstractor();
+		ArrayList<String> constractor=getAllConstractort();
+		
+		 displayConstractor(constractor);
+	}
+
+	private ArrayList<String> getAllConstractort() {
+		
+		return null;
+	}
+
+	private void displayConstractor (ArrayList<String> constractor) {
+		
 	}
 
 	private void getBuildingMonthlyRevenue() {
@@ -226,11 +238,16 @@ public class HouseCommittee extends Person  implements Runnable{
 		System.out.println("input building id:");
 		int building_id=Integer.parseInt(sc.nextLine());
 		ArrayList<String> building_payments=getPaymentsOfBuilding(building_id);
-		displayPayments(building_payments);
+		displayPaymentsByApartamet(building_payments);
 		// TODO Auto-generated method stub
 		
 	}
 
+
+	private void displayPaymentsByApartamet(ArrayList<String> building_payments) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	private void setNewBuilding() {
 		System.out.println("input Tenant id:");

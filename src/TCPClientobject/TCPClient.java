@@ -75,14 +75,20 @@ class TCPClient_with_serialized {
 			
 			break;
 		case Tenant:
-			//TODO update here ehat you did
+			//Create Tenant object with password and user name
+			Tenant ten=new Tenant(userName, password,sc);	
+			//Run thread on this object which establish a connection and ask verification against DB
+			Thread tt=new Thread(ten);
+			tt.start();
+			tt.join();
+			
 			break;
 		}
 
 	}
 
-	private static void register(Mode mode,Scanner sc) {
-		// TODO Implement register method
+	private static void register(Mode mode,Scanner sc) throws InterruptedException {
+		//TODO
 		
 	}
 
