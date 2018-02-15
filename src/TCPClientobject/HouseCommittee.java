@@ -27,7 +27,7 @@ public class HouseCommittee extends Person  implements Runnable{
 	private enum options{
 		LOG_OUT,
 		GET_PAYMENTS_BY_TENANT_ID,
-		GET_BUILDING_PAYMENTS_BY_APARTMENT,
+		GET_PAYMENTS_BY_APARTMENT,
 		SET_NEW_BUILDING,
 		UPDATE_TENANT_PAYMENT_BY_MONTH,
 		DELETE_TENANT_PAYMENT_BY_MONTH,
@@ -106,7 +106,9 @@ public class HouseCommittee extends Person  implements Runnable{
 				displayMenu();
 				String input=sc.nextLine();
 				options option=getOptionFromInt(Integer.parseInt(input));
+				
 				switch (option){
+				
 				case LOG_OUT: //logout
 					logOut(outToServer, inFromServer);
 					
@@ -116,35 +118,21 @@ public class HouseCommittee extends Person  implements Runnable{
 					getPaymentsByTenantId();
 					
 					break;
-				case GET_BUILDING_PAYMENTS_BY_APARTMENT:
-					//TODO -->
-					//get building id 
-					//get payment of each tenant with building id that was received
-					//display payments for each tenant with building id that was received
+				case GET_PAYMENTS_BY_APARTMENT:					
 					getBuildingPaymentsByApartament();
 					break;
+					
 				case SET_NEW_BUILDING:
-					//TODO -->
-					//get as input new tenants
-					//create new building with new id and put a new tenant to building
+					
 					setNewBuilding();
 					break;
-				case UPDATE_TENANT_PAYMENT_BY_MONTH:
-					//TODO -->
-					//get as input tenant apartament_number & month
-					//update payment in DB by the info from input
+				case UPDATE_TENANT_PAYMENT_BY_MONTH:									
 					updateTenantPaymentByMonth();
 					break;
-				case DELETE_TENANT_PAYMENT_BY_MONTH:
-					//TODO -->
-					//get as input apartament_number & month
-					//set payment in DB by the info to zero
+				case DELETE_TENANT_PAYMENT_BY_MONTH:					
 					deleteTenantPaymentByMonth();
 					break;
 				case GET_BUILDING_MONTHLY_REVENUE:
-					//TODO -->
-					//get as input buildingID
-					//display all income of building that been selected
 					getBuildingMonthlyRevenue();
 					break;
 				case GET_CONTRACTOR:
@@ -179,6 +167,8 @@ public class HouseCommittee extends Person  implements Runnable{
 
 	}
 
+	
+
 	private void setContractor() {
 		// TODO Auto-generated method stub
 		System.out.println("input Constractor id:");
@@ -198,57 +188,103 @@ public class HouseCommittee extends Person  implements Runnable{
 		//TODO displayConstractor();
 	}
 
-	private void getBuildingMonthlyRevenue() {
-		// TODO Auto-generated method stub
-		System.out.println("input building id:");
-		int building_id=Integer.parseInt(sc.nextLine());
+	private void getBuildingMonthlyRevenue() throws ClassNotFoundException, IOException {
+		
 		System.out.println("input number of month :");//for January insert 0.....
 		int month=Integer.parseInt(sc.nextLine());
+		int revenue=getMonthlyRevenue(month);
+		displayMonthlyRevenue(month,revenue);
 	}
 
-	private void deleteTenantPaymentByMonth() {
-		// TODO Auto-generated method stub
-		System.out.println("input apartament number:");
-		int apartament_number=Integer.parseInt(sc.nextLine());
-		System.out.println("input number of month :");//for January insert 0.....
-		int month=Integer.parseInt(sc.nextLine());
+	
+	private void displayMonthlyRevenue(int month,int revenue) {
+		System.out.printf("The revenue for month %d is %d",month,revenue);
+		System.out.println("\n_______________________________________\n");
 	}
 
-	private void updateTenantPaymentByMonth() {
-		// TODO Auto-generated method stub
-		System.out.println("input apartament number:");
-		int apartament_number=Integer.parseInt(sc.nextLine());
+	private int getMonthlyRevenue(int month) throws IOException, ClassNotFoundException {
+		
+		Message msg=new RequestMsg(Header.GET_BUILDING_MONTHLY_REVENUE, Sender.COMMITTEE, wrapArgInArrayList(month)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		if (response.isSucceed()){
+			
+			return Integer.parseInt(response.getArgs().get(0));
+		}
+		else{
+			System.err.println("operation failed");
+			return -1;
+		}
+		
+	}
+
+	private void deleteTenantPaymentByMonth() throws ClassNotFoundException, IOException {
+		
+		System.out.println("input tenant id :");
+		int tenant_id=Integer.parseInt(sc.nextLine());
 		System.out.println("input number of month :");//for January insert 0.....
 		int month=Integer.parseInt(sc.nextLine());
+		deleteTenantPaymentByMonth(tenant_id,month);
+	}
+
+	private void deleteTenantPaymentByMonth(int tenant_id, int month) throws IOException, ClassNotFoundException {
+		ArrayList<String> args=new ArrayList<String>();
+		args.add(tenant_id+""); args.add(month+"");
+		Message msg=new RequestMsg(Header.DELETE_TENANT_PAYMENT_BY_MONTH, Sender.COMMITTEE, args); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		System.out.println("\n_______________________________________\n");
+		
+	}
+
+	private void updateTenantPaymentByMonth() throws ClassNotFoundException, IOException {
+		// TODO Auto-generated method stub
+		System.out.println("input tenant id :");
+		int tenant_id=Integer.parseInt(sc.nextLine());
+		System.out.println("input number of month :");//for January insert 0.....
+		int month=Integer.parseInt(sc.nextLine());
+		System.out.println("input payment amount :");
+		int amount=Integer.parseInt(sc.nextLine());
+		updateTenantPaymentByMonth(tenant_id,month,amount);
+	}
+
+	private void updateTenantPaymentByMonth(int tenant_id, int month, int amount) throws IOException, ClassNotFoundException {
+		ArrayList<String> args=new ArrayList<String>();
+		args.add(tenant_id+""); args.add(month+""); args.add(amount+"");
+		Message msg=new RequestMsg(Header.DELETE_TENANT_PAYMENT_BY_MONTH, Sender.COMMITTEE, args); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		System.out.println("\n_______________________________________\n");
+		
 	}
 
 	private void getBuildingPaymentsByApartament() throws ClassNotFoundException, IOException {
-		System.out.println("input building id:");
-		int building_id=Integer.parseInt(sc.nextLine());
-		ArrayList<String> building_payments=getPaymentsOfBuilding(building_id);
-		displayPayments(building_payments);
+		System.out.println("input apartment number:");
+		int apartment_number=Integer.parseInt(sc.nextLine());
+		ArrayList<String> apartment_payments=getPaymentsOfBuilding(apartment_number);
+		displayPayments(apartment_payments);
 		// TODO Auto-generated method stub
 		
 	}
 
 
-	private void setNewBuilding() {
-		System.out.println("input Tenant id:");
-		int id=Integer.parseInt(sc.nextLine());
-		System.out.println("input Tenant user:");
-		String user=(sc.nextLine());//input string????
-		System.out.println("input Tenant password:");
-		int password=Integer.parseInt(sc.nextLine());
-		System.out.println("input Tenant monthly payment amount:");
-		int payment_amount=Integer.parseInt(sc.nextLine());
-		System.out.println("input Tenant apartament number:");
-		int apartament=Integer.parseInt(sc.nextLine());
-		System.out.println("input Tenant  name:");
-		String name=(sc.nextLine());//input string????
-		System.out.println("input Tenant last name:");
-		String last_name=(sc.nextLine());//input string????
-		System.out.println("input Tenant building id:");
+	private void setNewBuilding() throws ClassNotFoundException, IOException {
+		
+		System.out.println("type building id:");
 		int building_id=Integer.parseInt(sc.nextLine());
+		System.out.println("type building address:");
+		String building_address=sc.nextLine();
+		System.out.println("type building capacity:");
+		int building_cap=Integer.parseInt(sc.nextLine());
+		ArrayList<String> args=new ArrayList<String>(Arrays.asList(building_id+"",building_address+"",building_cap+""));
+		Message msg=new RequestMsg(Header.SET_NEW_BUILDING, Sender.COMMITTEE, args); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		
 		
 		
 	}
@@ -269,6 +305,8 @@ public class HouseCommittee extends Person  implements Runnable{
             System.out.println(arr);
             i++;
 		}
+		System.out.println("\n_______________________________________\n");
+		
 	
 	}
 	private options getOptionFromInt(int parseInt) {
@@ -278,7 +316,7 @@ public class HouseCommittee extends Person  implements Runnable{
 		case 2:
 			return options.GET_PAYMENTS_BY_TENANT_ID;
 		case 3:
-			return options.GET_BUILDING_PAYMENTS_BY_APARTMENT;
+			return options.GET_PAYMENTS_BY_APARTMENT;
 		case 4:
 			return options.SET_NEW_BUILDING;
 		case 5:
@@ -304,7 +342,7 @@ public class HouseCommittee extends Person  implements Runnable{
 		System.out.println("Choose one of the foloowing options:");
 		System.out.println("1. LogOut");
 		System.out.println("2. Get Monthly Payments of a practicular tenant");
-		System.out.println("3. Get Monthly Revenue of a practicular building");
+		System.out.println("3. Get Monthly Payments of a practicular apartment");
 		System.out.println("4. Set New building ");
 		System.out.println("5. Update Monthly Payments of a practicular tenant  ");
 		System.out.println("6. Delete Payments of a practicular tenant  ");
@@ -333,7 +371,7 @@ public class HouseCommittee extends Person  implements Runnable{
 	}
 	//EX2
 	private ArrayList<String> getPaymentsOfBuilding(int arg) throws IOException, ClassNotFoundException {
-		Message msg=new RequestMsg(Header.GET_BUILDING_PAYMENTS_BY_APARTMENT, Sender.COMMITTEE, wrapArgInArrayList(arg)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		Message msg=new RequestMsg(Header.GET_PAYMENTS_BY_APARTMENT, Sender.COMMITTEE, wrapArgInArrayList(arg)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
 		outToServer.writeObject(msg);
 		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
 		System.out.println(response.getMsgInfo());
