@@ -184,8 +184,20 @@ public class HouseCommittee extends Person  implements Runnable{
 	}
 
 	private void getContractor() {
+		System.out.println("This is the list of all contractors that hierd right now:");
 		
-		//TODO displayConstractor();
+		ArrayList<String> constractor=getAllConstractort();
+		
+		 displayConstractor(constractor);
+	}
+
+	private ArrayList<String> getAllConstractort() {
+		
+		return null;
+	}
+
+	private void displayConstractor (ArrayList<String> constractor) {
+		
 	}
 
 	private void getBuildingMonthlyRevenue() throws ClassNotFoundException, IOException {
@@ -262,6 +274,7 @@ public class HouseCommittee extends Person  implements Runnable{
 	}
 
 	private void getBuildingPaymentsByApartament() throws ClassNotFoundException, IOException {
+
 		System.out.println("input apartment number:");
 		int apartment_number=Integer.parseInt(sc.nextLine());
 		ArrayList<String> apartment_payments=getPaymentsOfBuilding(apartment_number);
@@ -271,9 +284,11 @@ public class HouseCommittee extends Person  implements Runnable{
 	}
 
 
+
 	private void setNewBuilding() throws ClassNotFoundException, IOException {
 		
 		System.out.println("type building id:");
+
 		int building_id=Integer.parseInt(sc.nextLine());
 		System.out.println("type building address:");
 		String building_address=sc.nextLine();

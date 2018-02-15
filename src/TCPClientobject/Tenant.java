@@ -102,7 +102,7 @@ public class Tenant extends Person implements Runnable{
 						logOut(outToServer, inFromServer);
 						break;
 					case GET_ALL_PAYMENTS_BY_MONTH: //logout
-						//TODO -->
+						
 						//display all the payment by id
 						getAllPaymentsByMonth();
 						
@@ -119,9 +119,36 @@ public class Tenant extends Person implements Runnable{
 			
 		}
 	}
-	private void getAllPaymentsByMonth() {
-		// TODO Auto-generated method stub
+	private void getAllPaymentsByMonth() throws ClassNotFoundException, IOException {
+		System.out.println("input your id for identification:");
+		int id=Integer.parseInt(sc.nextLine());
+		ArrayList<String> payments=getPaymentsOfTenant(id);
+		displayPayments(payments);
 		
+	}
+	private ArrayList<String> getPaymentsOfTenant(int arg) throws IOException, ClassNotFoundException {
+		Message msg=new RequestMsg(Header.GET_ALL_PAYMENTS_BY_MONTH, Sender.TENANT, wrapArgInArrayList(arg)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		
+		return response.getArgs();
+	}
+	private void displayPayments(ArrayList<String> payments) {
+		System.out.println("This is what you have paid by month:");
+		String month[] ={"January","February","March","April","May","June","July","August","September","October","November", "December" } ;
+		int i=0;
+		for (String arr : payments) {
+			 System.out.println("payment for "+month[i]+" = ");
+            System.out.println(arr);
+            i++;
+		}
+	
+	}
+	private ArrayList<String> wrapArgInArrayList(int arg) {
+		ArrayList<String> argWrapped=new ArrayList<String>();
+		argWrapped.add(arg+"");
+		return argWrapped;
 	}
 
 

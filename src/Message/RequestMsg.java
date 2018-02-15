@@ -18,6 +18,7 @@ public class RequestMsg extends Message {
 		this.header=header;
 		this.sender=sender;
 	}
+	
 		
 	//Methods
 	public Header getHeader(){

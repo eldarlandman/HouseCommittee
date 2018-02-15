@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import Message.Message;
@@ -146,11 +147,16 @@ public class CommitteeHandler extends AbstractHandler {
 	}
 
 	private void backUpPaymentsToDB() {
-		for (int tenant_id: this.tenantsTable.keySet()){
+		for (Integer tenant_id: this.tenantsTable.keySet()){
 			int[] payments=this.tenantsTable.get(tenant_id);
+//			Iterator it=tenantsTable.entrySet().iterator();
+//			
+//			while (it.hasNext()){
+//				it.next();
+//			}
 			for (int month=0; month<12;month++){
 				try {
-					updatePayment(tenant_id,payments[month],month-1);
+					updatePayment(tenant_id,payments[month],month+1);
 				} catch (SQLException e) {
 					System.out.printf("update for tenant %d of month %d failed!",tenant_id,month-1);
 					e.printStackTrace();
@@ -207,6 +213,7 @@ public class CommitteeHandler extends AbstractHandler {
 			return this.tenantsTable.get(new Integer(tenantId));
 		}
 
+
 		return null;
 	}
 	//	private int[] getPaymentsByBuildingId(int buildingId) {
@@ -252,11 +259,12 @@ public class CommitteeHandler extends AbstractHandler {
 
 	private void retrieveBuildingIdFromDB() throws SQLException {
 
-		this.committeeDetails=executeQueryAgainstDB(SQLCommands.getCommitteeDetails(this.username,this.password));
-
-		if (committeeDetails.next()){			
+		String query=SQLCommands.getCommitteeDetails(this.username,this.password);
+		this.committeeDetails=executeQueryAgainstDB(query);
+		
+		if (committeeDetails.next()){						
 			System.out.println("committee details are available now!");
-
+			this.buildingNumber=committeeDetails.getInt("building_id");
 		}
 		else{
 			System.err.println("building id for house committee have not been set yet!");			
