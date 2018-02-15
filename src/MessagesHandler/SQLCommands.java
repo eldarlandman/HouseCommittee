@@ -55,7 +55,10 @@ public final class SQLCommands {
 	}
 	
 	public static String updateTenantPayment(int tenant_id, int payment, int month){
-		return "INSERT INTO housecommittee.tenants_payment (`tenant_id`, `paid_month`, `paid_amount`) VALUES ("+tenant_id+","+month+","+payment+")";
+		//return "INSERT INTO housecommittee.tenants_payment (`tenant_id`, `paid_month`, `paid_amount`) VALUES ("+tenant_id+","+month+","+payment+")";
+		
+		String sql="UPDATE housecommittee.tenants_payment SET `paid_amount`="+payment+" WHERE tenant_id="+tenant_id+" AND paid_month="+month;
+		return sql;
 	}
 
 //TODO: think about update concept: full update? once per time? Maybe when server disconnects?
