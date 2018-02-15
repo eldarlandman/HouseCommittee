@@ -265,7 +265,7 @@ public class HouseCommittee extends Person  implements Runnable{
 	private void updateTenantPaymentByMonth(int tenant_id, int month, int amount) throws IOException, ClassNotFoundException {
 		ArrayList<String> args=new ArrayList<String>();
 		args.add(tenant_id+""); args.add(month+""); args.add(amount+"");
-		Message msg=new RequestMsg(Header.DELETE_TENANT_PAYMENT_BY_MONTH, Sender.COMMITTEE, args); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		Message msg=new RequestMsg(Header.UPDATE_TENANT_PAYMENT_BY_MONTH, Sender.COMMITTEE, args); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
 		outToServer.writeObject(msg);
 		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
 		System.out.println(response.getMsgInfo());

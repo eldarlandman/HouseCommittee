@@ -28,7 +28,7 @@ public class CommitteeHandler extends AbstractHandler {
 		super(reqNum, req, res);	
 
 	}
-
+	
 	@Override
 	public void processMsg() throws SQLException {
 		Message currMsg=super.getRequestMsg();
