@@ -201,7 +201,7 @@ String query=SQLCommands.updateTenantPayment(tenant_id, payment, month);
 	}
 	
 	private boolean setNewBuilding(int newBuildingNumber,String newBuildingAddress, int capacity) throws SQLException {
-		String query=SQLCommands.setBuildingID(this.committeeDetails.getInt("id"), newBuildingNumber, newBuildingAddress, capacity);
+		String query=SQLCommands.setBuildingID( this.committeeDetails.getInt("id"),newBuildingNumber, newBuildingAddress, capacity);
 		executeUpdateAgainstDB(query);
 
 		return true;
