@@ -41,6 +41,7 @@ public class CommitteeHandler extends AbstractHandler {
 			backUpPaymentsToDB();
 			disconnect();
 			setResponseMsg(new ResponseMsg(true, "User logged out", null));
+		
 			break;
 		case LOGIN:
 			if (checkUserCredential()){
@@ -132,6 +133,16 @@ public class CommitteeHandler extends AbstractHandler {
 
 			break;
 		case GET_CONTRACTOR:
+			args=currMsg.getArgs();
+			int building_id=Integer.parseInt(args.get(0));
+			int[] contractors=getContractors(building_id);
+
+			if (contractors!=null){				
+				setResponseMsg(new ResponseMsg(true, "All the contractors of building id="+building_id+" has recived!", wrapArgsInArrayList(contractors)));
+			}
+			else{
+				setResponseMsg(new ResponseMsg(false, "Invalid building_id!", null));
+			}
 			break;
 		case SET_CONTRACTOR:
 			break;
@@ -140,10 +151,26 @@ public class CommitteeHandler extends AbstractHandler {
 
 			break;
 
-			//TODO: done
+			
 
 		}
 
+	}
+
+	private int[] getContractors(int building_id) throws SQLException  {
+		int i=0;
+		int[] contractors=new int[i];
+		int id;
+		
+		ResultSet contractorsRecord=executeQueryAgainstDB(SQLCommands.getConstracots(building_id) );
+		while (contractorsRecord.next()){
+			id=contractorsRecord.getInt("id");
+			//pro = contractorsRecord.getInt("profession");
+			contractors[i]=id;
+			i++;
+		}
+		
+	return contractors;
 	}
 
 	private void backUpPaymentsToDB() {
@@ -166,22 +193,23 @@ public class CommitteeHandler extends AbstractHandler {
 		
 	}
 
+	
 	private void updatePayment(int tenant_id, int payment, int month) throws SQLException {
-		String query=SQLCommands.updateTenantPayment(tenant_id, payment, month);
-		executeUpdateAgainstDB(query);
+String query=SQLCommands.updateTenantPayment(tenant_id, payment, month);
 		
+		executeUpdateAgainstDB(query);
 	}
-
+	
 	private boolean setNewBuilding(int newBuildingNumber,String newBuildingAddress, int capacity) throws SQLException {
-		String query=SQLCommands.setBuildingID(this.committeeDetails.getInt("id"),newBuildingNumber,newBuildingAddress,capacity);
-
+		String query=SQLCommands.setBuildingID(this.committeeDetails.getInt("id"), newBuildingNumber, newBuildingAddress, capacity);
 		executeUpdateAgainstDB(query);
 
 		return true;
 	}
 
 	private int[] getPaymentsByApartment(int apartment_number) throws SQLException {
-		String query=SQLCommands.getTenantByapartment(apartment_number,this.buildingNumber);
+		String query=SQLCommands.getTenantByapartment(apartment_number, this.buildingNumber);
+		
 		ResultSet idRecord=executeQueryAgainstDB(query);
 		if (idRecord.next()){
 			//get tenant id
@@ -205,7 +233,7 @@ public class CommitteeHandler extends AbstractHandler {
 	}
 
 
-	//input: 
+
 
 	private int[] getPaymentsByTenantId(int tenantId) {
 
@@ -216,15 +244,7 @@ public class CommitteeHandler extends AbstractHandler {
 
 		return null;
 	}
-	//	private int[] getPaymentsByBuildingId(int buildingId) {
-	//		
-	//		if (this.tenantsTable.get(new Integer(buildingId))!=null){
-	//			return this.tenantsTable.get(new Integer(buildingId));
-	//		}
-	//		
-	//		return null;
-	//	}
-
+	
 	private void setCommitteeCache() throws SQLException {
 		retrieveBuildingIdFromDB();
 		ResultSet idRecord=executeQueryAgainstDB(SQLCommands.getTenantsOfCommittee(buildingNumber));

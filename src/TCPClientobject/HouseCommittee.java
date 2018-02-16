@@ -136,8 +136,7 @@ public class HouseCommittee extends Person  implements Runnable{
 					getBuildingMonthlyRevenue();
 					break;
 				case GET_CONTRACTOR:
-					//TODO -->
-					//display all contractor
+				
 					getContractor();
 					break;
 				case SET_CONTRACTOR:
@@ -171,33 +170,53 @@ public class HouseCommittee extends Person  implements Runnable{
 
 	private void setContractor() {
 		// TODO Auto-generated method stub
-		System.out.println("input Constractor id:");
-		int id=Integer.parseInt(sc.nextLine());
-		System.out.println("input Constractor name:");
-		String name=(sc.nextLine());//input string????
-		System.out.println("input Constractor last name:");
-		String last_name=(sc.nextLine());//input string????
-		System.out.println("input Constractor phone:");
-		int phone=Integer.parseInt(sc.nextLine());
-		System.out.println("input Constractor profession:");
-		String profession=(sc.nextLine());//input string????
+		//System.out.println("input Constractor id:");
+		//int id=Integer.parseInt(sc.nextLine());
+		//System.out.println("input Constractor name:");
+		//String name=(sc.nextLine());//input string????
+		//System.out.println("input Constractor last name:");
+		//String last_name=(sc.nextLine());//input string????
+		//System.out.println("input Constractor phone:");
+		//int phone=Integer.parseInt(sc.nextLine());
+		//System.out.println("input Constractor profession:");
+		//String profession=(sc.nextLine());//input string????
 	}
 
-	private void getContractor() {
+	private void getContractor() throws ClassNotFoundException, IOException {
+		
+		System.out.println("input number of building to see all contractors that employed right now :");//for January insert 0.....
+		int building_id=Integer.parseInt(sc.nextLine());
+		ArrayList<String> constractor=getAllConstractort(building_id);
 		System.out.println("This is the list of all contractors that hierd right now:");
-		
-		ArrayList<String> constractor=getAllConstractort();
-		
 		 displayConstractor(constractor);
 	}
+	
 
-	private ArrayList<String> getAllConstractort() {
+	private ArrayList<String> getAllConstractort(int args) throws IOException, ClassNotFoundException {
 		
-		return null;
+		Message msg=new RequestMsg(Header.GET_CONTRACTOR, Sender.COMMITTEE, wrapArgInArrayList(args)); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		
+		return response.getArgs();
 	}
+
+	
+	
+	
 
 	private void displayConstractor (ArrayList<String> constractor) {
 		
+		
+		for (String arr : constractor) {
+			 System.out.println("id of constracor is ID: ");
+            System.out.println(arr);
+           
+		}
+		System.out.println("\n_______________________________________\n");
+		
+	
 	}
 
 	private void getBuildingMonthlyRevenue() throws ClassNotFoundException, IOException {
@@ -252,7 +271,7 @@ public class HouseCommittee extends Person  implements Runnable{
 	}
 
 	private void updateTenantPaymentByMonth() throws ClassNotFoundException, IOException {
-		// TODO Auto-generated method stub
+	
 		System.out.println("input tenant id :");
 		int tenant_id=Integer.parseInt(sc.nextLine());
 		System.out.println("input number of month :");//for January insert 0.....
@@ -279,7 +298,7 @@ public class HouseCommittee extends Person  implements Runnable{
 		int apartment_number=Integer.parseInt(sc.nextLine());
 		ArrayList<String> apartment_payments=getPaymentsOfBuilding(apartment_number);
 		displayPayments(apartment_payments);
-		// TODO Auto-generated method stub
+		
 		
 	}
 
