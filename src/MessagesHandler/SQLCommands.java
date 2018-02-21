@@ -55,6 +55,7 @@ public final class SQLCommands {
 		return "INSERT INTO house.buildings (`id` , `house_committe_id` , `building_adrdress` , `building_capacity`) VALUES ('" +newBuildingNumber+"','"+houseCommittee+"','"+address+"','"+capacity+"');";
 	}
 	
+	
 	public static String updateTenantPayment(int tenant_id, int payment, int month){
 		
 		
@@ -65,6 +66,14 @@ public final class SQLCommands {
 	public static String getConstracots(int building_id) {
 		
 		 return "SELECT * from contractors WHERE id=\""+ building_id;
+	}
+
+	public static String setNewConstracotr(int new_constractor_id, String new_constractor_name,
+			String new_constractor_last_name, int new_constractor_phone, String new_constractor_profession,
+			int new_constractor_building) {
+		
+		return "INSERT INTO house.contractors (`id` , `name` , `last name` , `phone`,`profession`,`building_id`) VALUES ('" +new_constractor_id+"','"+new_constractor_name+"','"+new_constractor_last_name+"','"+new_constractor_phone+"','"+new_constractor_profession+"','"+new_constractor_building+"');";
+	
 	}
 
 //TODO: think about update concept: full update? once per time? Maybe when server disconnects?

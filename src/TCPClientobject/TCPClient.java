@@ -88,9 +88,37 @@ class TCPClient_with_serialized {
 	}
 
 	private static void register(Mode mode,Scanner sc) throws InterruptedException {
-		//TODO
-		
+		sc.nextLine();
+		System.out.println("write your username:");
+		String userName=sc.nextLine();
+		System.out.println("write your password:");
+		String password=sc.nextLine();
+		//sc.close();		
+	
+		switch(mode){
+		case HouseCommittee:
+			//Create houseCom object with password and user name
+			HouseCommittee hc=new HouseCommittee(userName, password,sc);			
+			//Run thread on this object which establish a connection and ask verification against DB
+			Thread t=new Thread(hc);
+			t.start();
+			t.join();
+			
+			break;
+		case Tenant:
+			//Create Tenant object with password and user name
+			Tenant ten=new Tenant(userName, password,sc);	
+			//Run thread on this object which establish a connection and ask verification against DB
+			Thread tt=new Thread(ten);
+			tt.start();
+			tt.join();
+			
+			break;
+		}
+
 	}
+		
+	
 
 
 

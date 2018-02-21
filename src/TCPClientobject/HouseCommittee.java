@@ -140,10 +140,7 @@ public class HouseCommittee extends Person  implements Runnable{
 					getContractor();
 					break;
 				case SET_CONTRACTOR:
-					//TODO -->
-					//get as input contractor profession 
-					//check if already exist 
-					//if not add to DB else give out put "already exist"
+					
 					setContractor();
 					
 					break;
@@ -168,18 +165,25 @@ public class HouseCommittee extends Person  implements Runnable{
 
 	
 
-	private void setContractor() {
-		// TODO Auto-generated method stub
-		//System.out.println("input Constractor id:");
-		//int id=Integer.parseInt(sc.nextLine());
-		//System.out.println("input Constractor name:");
-		//String name=(sc.nextLine());//input string????
-		//System.out.println("input Constractor last name:");
-		//String last_name=(sc.nextLine());//input string????
-		//System.out.println("input Constractor phone:");
-		//int phone=Integer.parseInt(sc.nextLine());
-		//System.out.println("input Constractor profession:");
-		//String profession=(sc.nextLine());//input string????
+	private void setContractor() throws IOException, ClassNotFoundException {
+		System.out.println("input Constractor id:");
+		int constractor_id=Integer.parseInt(sc.nextLine());
+		System.out.println("input Constractor name:");
+		String constractor_name=sc.nextLine();
+		System.out.println("input Constractor last name:");
+		String constractor_last_name=sc.nextLine();
+		System.out.println("input Constractor phone:");
+		int constractor_phone=Integer.parseInt(sc.nextLine());
+		System.out.println("input Constractor profession:");
+		String constractor_profession=sc.nextLine();
+		System.out.println("input Constractor building:");
+		int constractor_building=Integer.parseInt(sc.nextLine());
+		ArrayList<String> args=new ArrayList<String>(Arrays.asList(constractor_id+"",constractor_name+"",constractor_last_name+"",constractor_phone+"",constractor_profession+"",constractor_building+""));
+		Message msg=new RequestMsg(Header.SET_CONTRACTOR, Sender.COMMITTEE, args); //Message (instead of RequestMsg) for Possible future abstraction usage on serverSide
+		outToServer.writeObject(msg);
+		ResponseMsg response=(ResponseMsg)inFromServer.readObject();
+		System.out.println(response.getMsgInfo());
+		
 	}
 
 	private void getContractor() throws ClassNotFoundException, IOException {

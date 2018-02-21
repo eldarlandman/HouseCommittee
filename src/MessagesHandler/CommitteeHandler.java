@@ -52,6 +52,9 @@ public class CommitteeHandler extends AbstractHandler {
 			setResponseMsg(new ResponseMsg(false, "Incorrect userName or Password !", null));
 
 			break;
+		case SIGN_UP:
+			
+			break;
 		case GET_PAYMENTS_BY_TENANT_ID://choose a  id of tenant and it will show all the payments
 			args=currMsg.getArgs();
 			int tenantId=Integer.parseInt(args.get(0));
@@ -145,6 +148,22 @@ public class CommitteeHandler extends AbstractHandler {
 			}
 			break;
 		case SET_CONTRACTOR:
+			
+			int new_constractor_id=Integer.parseInt(args.get(0));
+			String new_constractor_name=args.get(1);
+			String new_constractor_last_name=args.get(2);
+			int new_constractor_phone=Integer.parseInt(args.get(3));
+			String new_constractor_profession=args.get(4);
+			int new_constractor_building=Integer.parseInt(args.get(5));
+			boolean setSucceeded_constracor=setNewConstractor(new_constractor_id, new_constractor_name, new_constractor_last_name,new_constractor_phone,new_constractor_profession,new_constractor_building);
+			if (setSucceeded_constracor){
+				setResponseMsg(new ResponseMsg(true, "New constractor profession "+new_constractor_profession+" was added",null));
+			}
+			else{
+				setResponseMsg(new ResponseMsg(false, "Update Failed!", null));
+			}
+			
+			
 			break;
 
 		default:
@@ -155,6 +174,15 @@ public class CommitteeHandler extends AbstractHandler {
 
 		}
 
+	}
+
+	private boolean setNewConstractor(int new_constractor_id, String new_constractor_name,
+			String new_constractor_last_name, int new_constractor_phone, String new_constractor_profession,int new_constractor_building) throws SQLException {
+		String query=SQLCommands.setNewConstracotr( new_constractor_id,  new_constractor_name,
+				new_constractor_last_name, new_constractor_phone, new_constractor_profession,new_constractor_building);
+		executeUpdateAgainstDB(query);
+
+		return true;
 	}
 
 	private int[] getContractors(int building_id) throws SQLException  {
@@ -206,6 +234,7 @@ String query=SQLCommands.updateTenantPayment(tenant_id, payment, month);
 
 		return true;
 	}
+	
 
 	private int[] getPaymentsByApartment(int apartment_number) throws SQLException {
 		String query=SQLCommands.getTenantByapartment(apartment_number, this.buildingNumber);

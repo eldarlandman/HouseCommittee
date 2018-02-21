@@ -11,7 +11,7 @@ public abstract class Message implements Serializable{ //abstract class because 
 	private static final long serialVersionUID = 1L;
 
 	//fields
-	public enum Header {LOGIN,
+	public enum Header {LOGIN,SIGN_UP,
 		LOG_OUT,
 		GET_PAYMENTS_BY_TENANT_ID,
 		GET_PAYMENTS_BY_APARTMENT,
